@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://wo-wo.github.io</id>
+    <title>Gridea</title>
+    <updated>2021-10-11T18:00:36.156Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://wo-wo.github.io"/>
+    <link rel="self" href="https://wo-wo.github.io/atom.xml"/>
+    <subtitle>温故而知新</subtitle>
+    <logo>https://wo-wo.github.io/images/avatar.png</logo>
+    <icon>https://wo-wo.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2021, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[go学习-1.素材推荐]]></title>
+        <id>https://wo-wo.github.io/post/go-xue-xi-1su-cai-tui-jian/</id>
+        <link href="https://wo-wo.github.io/post/go-xue-xi-1su-cai-tui-jian/">
+        </link>
+        <updated>2021-10-11T17:57:49.000Z</updated>
+        <content type="html"><![CDATA[<p>[toc]</p>
+<h2 id="1思维导图">1.思维导图</h2>
+<p>1.<a href="http://www.topgoer.com/%E5%BC%80%E6%BA%90/go%E5%AD%A6%E4%B9%A0%E7%BA%BF%E8%B7%AF%E5%9B%BE.html">go学习线路图</a>(非常清晰、全面)</p>
+<p>2.<a href="https://xueyuanjun.com/post/19706">学习路线图</a></p>
+<h2 id="2入门阶段">2.入门阶段</h2>
+<h3 id="1网站">1.网站</h3>
+<h4 id="1精品">1.精品</h4>
+<p>1.<a href="https://www.yuque.com/bobby-zpcyu/fgg66n/yufxlo">慕课网-Go开发工程师-课程文档</a>(精)</p>
+<blockquote>
+<p>1.go基础<br>
+2.go全栈开发<br>
+3.go微服务<br>
+4.分布式系统开发</p>
+</blockquote>
+<p>1.<a href="https://learnku.com/docs/the-way-to-go">《the way to go》的 中文版本</a>(精)</p>
+<blockquote>
+<p>1.国外高星推荐之一，译文，重排版;<br>
+2.发布于社区：learnku;<br>
+3.丰富样例;</p>
+</blockquote>
+<p>2.<a href="http://golang.iswbm.com/en/latest/">Go编程时光</a>(精)</p>
+<blockquote>
+<p>1.别人总结20多个网站，学习成果;(长文章需要关注公众号解锁)<br>
+2.有公众号：go编程时光，定期更新文章;<br>
+3.丰富样例;</p>
+</blockquote>
+<p>3.<a href="https://studygolang.gitbook.io/learn-go-with-tests/">Learn Go with tests-中文版</a>(精)</p>
+<blockquote>
+<p>1.丰富样例 + 多次测试 + 多次重构 + 总结;（需要一定的基础）<br>
+2.发布于最大的go语言中文社区：go语言中文网;</p>
+</blockquote>
+<p>4.<a href="https://docs.microsoft.com/zh-cn/learn/paths/go-first-steps/">开始使用 Go - 微软</a>(精)</p>
+<blockquote>
+<p>微软提供的 go 基础学习</p>
+</blockquote>
+<h4 id="2其它">2.其它</h4>
+<p>1.<a href="https://books.studygolang.com/gobyexample/">Go by Example 中文</a></p>
+<blockquote>
+<p>1.丰富的样例</p>
+</blockquote>
+<p>2.<a href="http://www.topgoer.com/">TopGoer 教程</a></p>
+<blockquote>
+<p>1.内容非常多，网络编程、并发编程，很多主流的 Web 框架都有</p>
+</blockquote>
+<p>3.<a href="https://www.runoob.com/go/go-tutorial.html">runoob.com</a></p>
+<blockquote>
+<p>1.类 w3school</p>
+</blockquote>
+<p>4.<a href="http://c.biancheng.net/golang/">Go语言入门教程，Golang入门教程</a></p>
+<blockquote>
+<p>1.非常详细，关键节点付费</p>
+</blockquote>
+<p>5.<a href="https://xueyuanjun.com/books/golang-tutorials">Go 入门教程</a></p>
+<blockquote>
+<p>1.关键节点应该是付费</p>
+</blockquote>
+<h3 id="2视频">2.视频</h3>
+<p>1.<a href="https://github.com/Unknwon/go-fundamental-programming">Go 编程基础</a></p>
+<blockquote>
+<p>1.github 视屏，选网易云课堂<br>
+2.社区：learnku：<code>https://learnku.com/docs/go-fundamental-programming</code></p>
+</blockquote>
+<p>2.<a href="https://www.bilibili.com/video/BV1Vi4y1t71d">Golang教程</a></p>
+<blockquote>
+<p>1.讲师：大地(前50课)</p>
+</blockquote>
+<p>3.<a href="https://edu.aliyun.com/course/1973">阿里云大学</a></p>
+<blockquote>
+<p>1.讲师：韩顺平<br>
+2.<a href="https://edu.aliyun.com/course/1973">Go语言核心编程(1)：基础语法、数组、切片、Map</a>(182课时)<br>
+3.<a href="https://edu.aliyun.com/course/1974">Go语言核心编程(2)：面向对象、文件、单元测试、反射、TCP编程</a>(162课时)<br>
+4.<a href="https://edu.aliyun.com/course/1975">Go语言核心编程(3)：数据结构和算法</a>(47课时)</p>
+</blockquote>
+<h3 id="3社区">3.社区</h3>
+<p>1.<a href="https://studygolang.com/">Go 语言中文网</a>(精)</p>
+<blockquote>
+<p>1.最大的 Go 语言中文社区</p>
+</blockquote>
+<p>2.<a href="https://learnku.com/go">learnku</a></p>
+<p>3.<a href="https://gocn.vip/">GoCN</a></p>
+<blockquote>
+<p>1.进阶需要时可看，精华帖多</p>
+</blockquote>
+<h3 id="4题库">4.题库</h3>
+<p>1.<a href="https://leetcode-cn.com/problemset/all/">力扣</a>(精)</p>
+<blockquote>
+<p>1.大量丰富的练习题，并区分难度</p>
+</blockquote>
+<h2 id="3web开发">3.web开发</h2>
+<p><a href="https://github.com/Unknwon/go-web-foundation">Go Web 基础</a>(视屏)<br>
+<a href="">Go Web编程</a>(书籍)</p>
+<h3 id="1gin-中文文档">1.<a href="https://github.com/skyhee/gin-doc-cn">gin 中文文档</a></h3>
+<p><a href="https://www.kancloud.cn/shuangdeyu/gin_book/949411">看云-文档</a></p>
+<h3 id="2beego-开发文档">2.<a href="https://www.kancloud.cn/hello123/beego/126086">beego 开发文档</a></h3>
+<h3 id="3echo-中文文档">3.<a href="https://www.bookstack.cn/read/go-echo/README.md">echo 中文文档</a></h3>
+<h3 id="4iris-中文文档">4.<a href="https://studyiris.com/doc/">Iris 中文文档</a></h3>
+<h3 id="5buffalo-中文文档">5.<a href="https://learnku.com/docs/buffalo-doc-cn">Buffalo 中文文档</a></h3>
+<h3 id="6revel-中文文档">6.<a href="https://www.bookstack.cn/books/gorevel-manual-zh">Revel 中文文档</a></h3>
+<h2 id="4工具使用">4.工具使用</h2>
+<h3 id="1go-命令教程">1.Go 命令教程</h3>
+<p>1.<a href="https://wiki.jikexueyuan.com/project/go-command-tutorial/0.0.html">标准命令详解</a></p>
+<h3 id="2编程规范">2.编程规范</h3>
+<p>1.<a href="https://www.infoq.cn/article/G6c95VyU5telNXXCC9yO">Uber 开源 Go 语言编程规范-中文版</a></p>
+<h3 id="3go名库">3.Go名库</h3>
+<p>1.<a href="https://github.com/Unknwon/go-rock-libraries-showcases">Go名库讲解</a>(视屏)</p>
+<h2 id="5进阶阶段">5.进阶阶段：</h2>
+<h3 id="1网站精品">1.网站(精品)</h3>
+<p>1.<a href="https://books.studygolang.com/gopl-zh/">Go语言圣经（中文版）</a></p>
+<blockquote>
+<p>1.权威著作。基础进阶</p>
+</blockquote>
+<p>2.<a href="https://eddycjy.gitbook.io/golang/">跟煎鱼学Go</a></p>
+<blockquote>
+<p>1.干货满满</p>
+</blockquote>
+<p>3.<a href="https://mojotv.cn/404#Golang">mojotv 进阶系列</a></p>
+<blockquote>
+<p>1.高质量网站</p>
+</blockquote>
+<p>4.<a href="https://chai2010.gitbooks.io/advanced-go-programming-book/content/">Go 语言高级编程</a></p>
+<blockquote>
+<p>1.本书涵盖CGO、Go汇编语言、RPC实现、Web框架实现、分布式系统等高阶主题.<br>
+2.<a href="https://github.com/chai2010/advanced-go-programming-book">github</a></p>
+</blockquote>
+<h3 id="2视频-2">2.视频</h3>
+<p>1.<a href="https://www.bilibili.com/video/BV1GD4y1D7D3/?spm_id_from=333.788.videocard.12">go设计模式</a></p>
+<p>2.<a href="https://www.bilibili.com/video/BV1ME411e7uC?from=search&amp;seid=10660345461711406062">从深度理解golang开发到实战</a>(204课)</p>
+<p>3.<a href="https://www.bilibili.com/video/BV1zE411M7jg?from=search&amp;seid=10660345461711406062">golang数据结构与算法</a>(96课)</p>
+<p>4.<a href="https://www.bilibili.com/video/BV1GV411S7Ra?from=search&amp;seid=14512967146237597844">Golang Socket编程</a>(31课)</p>
+<h3 id="3公众号">3.公众号</h3>
+<p>1.码农桃花源</p>
+<blockquote>
+<p>1.真大佬。每篇文章雕琢 1 个月</p>
+</blockquote>
+<h2 id="6源码阅读">6.源码阅读</h2>
+<p>1.<a href="https://talkgo.org/">Go 夜读</a></p>
+<blockquote>
+<p>1.资深 Gopher 组织的开源项目、解读源码<br>
+2.每周四晚分享</p>
+</blockquote>
+<p>2.<a href="https://changkun.de/golang/">Go 语言原本</a></p>
+<p>3.<a href="https://draveness.me/golang/">Go 语言设计与实现</a></p>
+<blockquote>
+<p>1.写得有点深</p>
+</blockquote>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Hello Gridea]]></title>
+        <id>https://wo-wo.github.io/post/hello-gridea/</id>
+        <link href="https://wo-wo.github.io/post/hello-gridea/">
+        </link>
+        <updated>2018-12-11T16:00:00.000Z</updated>
+        <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
+✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
+✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
+<!-- more -->
+<p><a href="https://github.com/getgridea/gridea">Github</a><br>
+<a href="https://gridea.dev/">Gridea 主页</a><br>
+<a href="http://fehey.com/">示例网站</a></p>
+<h2 id="特性">特性👇</h2>
+<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
+<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
+<p>🏷️  你可以对文章进行标签分组</p>
+<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
+<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
+<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
+<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
+<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
+<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
+<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
+<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
+<p>未来，它一定会成为你离不开的伙伴</p>
+<p>尽情发挥你的才华吧！</p>
+<p>😘 Enjoy~</p>
+]]></content>
+    </entry>
+</feed>
