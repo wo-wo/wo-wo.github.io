@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>go学习-16.例：监控脚本 | 石强博客</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="go学习-16.例：监控脚本 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="go学习-16.例：监控脚本"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-16li-jian-kong-jiao-ben/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="石强博客"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://wo-wo.github.io">石强博客</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://wo-wo.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
+        </span>
+            <h1>go学习-16.例：监控脚本</h1>
+            <span class="meta">
+            	Posted on
+              2021-10-12，6 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>[toc]</p>
+<h3 id="1go-mod模式">1.go mod模式</h3>
+<pre><code># 1.初始化模块
+go mod init [module]
+
+# 2.下载第三方包
+go mod download
+
+# 3.ide引入第三方包（运行时会引入第三方包）
+go run ...
+</code></pre>
+<h3 id="2go-mod-flags包">2.go mod + flags包</h3>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/shizq/imgs/raw/master/PicGo/20210323141301.png" alt="" loading="lazy"></figure>
+<p>1.新建包</p>
+<pre><code>mkdir monitor
+go mod init monitor
+</code></pre>
+<p>2.新增 main.go</p>
+<pre><code>package main
+
+import (
+	&quot;flag&quot;
+	&quot;fmt&quot;
+	&quot;github.com/spf13/viper&quot;
+	&quot;monitor/helpers&quot;
+	&quot;path&quot;
+	&quot;runtime&quot;
+	&quot;strings&quot;
+)
+
+var (
+	processName string
+	cmd string
+	currFileName string
+)
+
+func init()  {
+	flag.StringVar(&amp;processName, &quot;processName&quot;, &quot;&quot;, &quot;var process name&quot;)
+
+	viper.SetConfigName(&quot;config&quot;)
+	viper.SetConfigType(&quot;yml&quot;)
+	viper.AddConfigPath(&quot;./conf&quot;)
+	err := viper.ReadInConfig()
+	if err != nil {
+		fmt.Printf(&quot;配置文件读取失败：%s&quot;, err.Error())
+	}
+}
+
+func main() {
+	getCurrFileName()
+	getCmd()
+	helpers.Monitor(cmd, processName)
+
+	//读取db配置
+	//db := structs.Db{}
+	//db.ShowConfInfo()
+}
+
+func getCmd()  {
+	flag.Parse()
+
+	//获取进程id，排除grep进程、当前go进程
+	//问题：字符串拼接有几种方式？
+	cmd = &quot;ps -ef | grep &quot; + processName + &quot; | grep -v grep | grep -v &quot; + currFileName + &quot; | awk '{print $2}'&quot;
+	fmt.Printf(&quot;cmd：%s \n&quot;, cmd)
+}
+
+func getCurrFileName()  {
+	//fmt.Println(os.Args)
+	//文件全路径
+	_, fullFileName, _, _ := runtime.Caller(0)
+
+	//文件名
+	fileName := path.Base(fullFileName)
+	//后缀名
+	fileSuffix := path.Ext(fileName)
+	//不含后缀的文件名
+	currFileName = strings.TrimSuffix(fileName, fileSuffix)
+	fmt.Printf(&quot;当前文件名称：%s \n&quot;, currFileName)
+}
+</code></pre>
+<p>3.新增配置文件 conf.yml</p>
+<pre><code>dingDing:
+  url: &quot;https://oapi.dingtalk.com/robot/send?access_token=ae4f397ec3fc9310ce418dd23ac4649631b75bc1128836fdb8f8bef89fb27d3c&quot;
+db:
+  redis:
+    ip: &quot;127.0.0.1&quot;
+    port: &quot;6379&quot;
+    aa: &quot;11&quot;
+  mysql:
+    ip: &quot;127.0.0.1&quot;
+    port: &quot;3306&quot;
+    bb: &quot;22&quot;
+</code></pre>
+<p>4.新增结构体</p>
+<pre><code># 1.db 结构体
+package structs
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/spf13/viper&quot;
+)
+
+type Db struct {
+	Db DbConf
+}
+
+type DbConf struct {
+	Redis Redis
+	Mysql Mysql
+}
+
+type Redis struct {
+	Ip string
+	Port string
+	Aa string
+}
+
+type Mysql struct {
+	Ip string
+	Port string
+	Bb string
+}
+
+func (d *Db) ShowConfInfo()  {
+	viper.Unmarshal(d)
+
+	fmt.Printf(&quot;mysql ip：%s，port: %s \n&quot;, d.Db.Mysql.Ip, d.Db.Mysql.Port)
+	fmt.Printf(&quot;redis ip：%s，port: %s \n&quot;, d.Db.Redis.Ip, d.Db.Redis.Port)
+}
+
+# 2.dingding结构体
+package structs
+
+import (
+	&quot;fmt&quot;
+	&quot;net/http&quot;
+	&quot;strings&quot;
+)
+
+type DingDing struct {
+	DingDing DingConf
+}
+
+type DingConf struct {
+	Url string
+}
+
+func (d *DingDing) SendDingMsg(url, title, msg string) bool {
+	format := `### %s \n\n #### %s \n\n`
+	text := fmt.Sprintf(format, title, msg)
+	content := `{&quot;msgtype&quot;: &quot;markdown&quot;,
+					&quot;markdown&quot;: {
+            			&quot;title&quot;:&quot;` + title + `&quot;,
+            			&quot;text&quot;: &quot;` + text + `&quot;
+        			}
+			}`
+	req, err := http.NewRequest(&quot;POST&quot;, url, strings.NewReader(content))
+	if err != nil {
+		fmt.Printf(&quot;建立请求失败：%s&quot;, err.Error())
+		return false
+	}
+	req.Header.Set(&quot;Content-Type&quot;, &quot;application/json; charset=utf-8&quot;)
+
+	client := &amp;http.Client{}
+	rst, err := client.Do(req)
+	defer rst.Body.Close()
+	if err != nil {
+		fmt.Printf(&quot;请求发送失败：%s&quot;, err.Error())
+		return false
+	}
+
+	return true
+}
+</code></pre>
+<p>5.新增 helpers</p>
+<pre><code># 1.monitor类
+package helpers
+
+import (
+	&quot;fmt&quot;
+	&quot;os/exec&quot;
+	&quot;strings&quot;
+)
+
+func Monitor(cmd, processName string) {
+	rst, err := exec.Command(&quot;/bin/sh&quot;, &quot;-c&quot;, cmd).Output()
+	if err != nil {
+		fmt.Printf(&quot;cmd exec failed! %s \n&quot;, err.Error())
+	}
+
+	//将字节转化成字符串，去掉2边的空格
+	pid := strings.TrimSpace(string(rst))
+	if pid == &quot;&quot; {
+		//发送钉钉报警消息
+		SendDingMsg(processName)
+	} else {
+		fmt.Printf(&quot;pid：%s \n&quot;, pid)
+	}
+}
+
+# 2.common类
+package helpers
+
+import (
+	&quot;github.com/spf13/viper&quot;
+	&quot;monitor/structs&quot;
+)
+
+func SendDingMsg(msg string) {
+	var d structs.DingDing
+	viper.Unmarshal(&amp;d)
+
+	//fmt.Println(d.DingDing.Url)
+	d.SendDingMsg(d.DingDing.Url, &quot;监控脚本报警&quot;, &quot;脚本 &quot; + msg + &quot; 意外停止，请及时处理!!&quot;)
+}
+</code></pre>
+<p>6.执行</p>
+<pre><code>go run main.go -processName mysql
+</code></pre>
+<h3 id="3go-mod-go-flags包">3.go mod + go-flags包</h3>
+<blockquote>
+<p>与上诉唯一不同，声明命令行参数的方式</p>
+</blockquote>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/jessevdk/go-flags&quot;
+	&quot;github.com/spf13/viper&quot;
+	&quot;monitorFlags/helpers&quot;
+	&quot;path&quot;
+	&quot;runtime&quot;
+	&quot;strings&quot;
+)
+
+var (
+	processName string
+	cmd string
+	currFileName string
+)
+
+type Option struct {
+	PName string `short:&quot;n&quot; long:&quot;pName&quot; description:&quot;var process name&quot;`
+}
+
+func init()  {
+	viper.SetConfigName(&quot;config&quot;)
+	viper.SetConfigType(&quot;yml&quot;)
+	viper.AddConfigPath(&quot;./conf&quot;)
+	err := viper.ReadInConfig()
+	if err != nil {
+		fmt.Printf(&quot;配置文件读取失败：%s&quot;, err.Error())
+	}
+}
+
+func main() {
+	getCurrFileName()
+	getCmd()
+	helpers.Monitor(cmd, processName)
+}
+
+func getCmd()  {
+	var opt Option
+	flags.Parse(&amp;opt)
+	processName = opt.PName
+
+	//获取进程id，排除grep进程、当前go进程
+	//问题：字符串拼接有几种方式？
+	cmd = &quot;ps -ef | grep &quot; + processName + &quot; | grep -v grep | grep -v &quot; + currFileName + &quot; | awk '{print $2}'&quot;
+	fmt.Printf(&quot;cmd：%s \n&quot;, cmd)
+}
+
+func getCurrFileName()  {
+	//fmt.Println(os.Args)
+	//文件全路径
+	_, fullFileName, _, _ := runtime.Caller(0)
+
+	//文件名
+	fileName := path.Base(fullFileName)
+	//后缀名
+	fileSuffix := path.Ext(fileName)
+	//不含后缀的文件名
+	currFileName = strings.TrimSuffix(fileName, fileSuffix)
+	fmt.Printf(&quot;当前文件名称：%s \n&quot;, currFileName)
+}
+</code></pre>
+<p>执行</p>
+<pre><code>go run main.go -n mysql
+</code></pre>
+<h3 id="4go-mod-cobra">4.go mod + cobra</h3>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-15pei-zhi-guan-li-gong-ju-viper/">
+              <span class="post-title">
+                go学习-15.配置管理工具-viper&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://wo-wo.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>石强博客</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>go学习-4.数据类型 | 石强博客</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="go学习-4.数据类型 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="go学习-4.数据类型"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-4shu-ju-lei-xing/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="石强博客"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://wo-wo.github.io">石强博客</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://wo-wo.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
+        </span>
+            <h1>go学习-4.数据类型</h1>
+            <span class="meta">
+            	Posted on
+              2021-10-12，14 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>[toc]</p>
+<h3 id="1常量">1.常量</h3>
+<h4 id="1常量的值必须是能够在编译时就能够确定的">1.常量的值必须是能够在编译时就能够确定的</h4>
+<pre><code>正确的做法：const c1 = 2/3
+错误的做法：const c2 = getNumber() // 引发构建错误: getNumber() used as value
+</code></pre>
+<h4 id="2多常量定义">2.多常量定义</h4>
+<pre><code>const beef, two, c = &quot;eat&quot;, 2, &quot;veg&quot;
+const (
+    Unknown = 0
+    Female = 1
+    Male = 2
+)
+# 相同赋值只需要赋值第一个
+const (
+    a = 10
+    b
+    c
+)
+</code></pre>
+<h4 id="3iota">3.iota</h4>
+<p>一般用作枚举值。第一次出现是 0，后续每出现一次递增 1</p>
+<pre><code>const (
+    a = iota //0
+    b = iota //1
+    c        //1
+    d = iota //2
+)
+</code></pre>
+<h3 id="2变量">2.变量</h3>
+<h4 id="1声明">1.声明</h4>
+<p>1.类型在变量名后<br>
+2.变量首字母大写 =&gt; public，可被外部使用；小写 =&gt; private</p>
+<pre><code># 变量声明的几种方式
+# 1.单变量，直接声明
+var name string = &quot;a&quot;
+# 简单类型可以简写
+# 但不建议。原因：如果后边是小数，编辑器会将变量声明成float64，一般不要高经度(内存大)
+var name = &quot;a&quot;
+
+# 2.多变量一起声明
+var a, b int = 1, 2
+var (
+    a int
+    str string
+)
+
+# 3.推导声明 :=(推导声明，或简短声明)
+# 函数内部的局部变量，建议简短声明。且简短声明只能在函数内部使用
+# = 声明的变量必须被使用，否则报错；:= 声明的变量，允许不被使用
+name := &quot;a&quot;
+name, age := &quot;a&quot;, 18
+
+# 4.new()函数。返回指针
+var c = new(int)
+
+# &amp;变量，返回指针
+# *指针，返回值 
+</code></pre>
+<h4 id="3匿名变量-_也称作占位符或空白标识符">3.匿名变量 _（也称作占位符，或空白标识符）</h4>
+<p><code>接收变量，但抛弃，不可后续使用</code><br>
+原因：声明的变量必须被使用，否则报错<br>
+优点：</p>
+<ul>
+<li>不分配内存，不占用内存空间</li>
+<li>不需要你为命名无用的变量名而纠结</li>
+<li>多次声明不会有任何问题</li>
+</ul>
+<h4 id="4值类型和引用类型">4.值类型和引用类型</h4>
+<p>1.int、float、bool 和 string基本数据类型是值类型，变量直接指向内存中的值<br>
+2.复合类型，存储指针</p>
+<pre><code>var a int = 15
+b = a //值复制
+
+var c = [...]int{1,2,3}
+d = c //指针复制
+</code></pre>
+<h4 id="5打印-printf">5.打印 Printf</h4>
+<pre><code># 格式化说明符
+%v    默认输出格式
+%+v   默认输出格式（带上k-v）
+%s    字符串
+%t    布尔值
+%d    整数(%x,%X 16进制)
+%g    浮点数(%f浮点数，%e科学计数法)
+%0d   定长整数
+%n.mg 数字n，精确到小数点后m位，
+%p    指针格式化
+</code></pre>
+<h4 id="6变量逃逸">6.变量逃逸</h4>
+<h5 id="1逃逸分析">1.逃逸分析</h5>
+<p>1.概念<br>
+<code>逃逸分析：编译时，分析指针动态范围的方法</code></p>
+<blockquote>
+<p>即，当一个对象的指针被多个方法或者线程引用时，称指针发生了逃逸。<br>
+通俗讲：逃逸分析决定一个分配在堆上，还是栈上</p>
+</blockquote>
+<p>2.是否逃逸</p>
+<blockquote>
+<p>编译器会根据变量是否被外部引用来决定是否逃逸：<br>
+1.如果函数外部没有引用，则优先放到栈中；<br>
+2.如果函数外部存在引用，则必定放到堆中；<br>
+针对第一条，可能放到堆上的情形：定义了一个很大的数组，需要申请的内存过大，超过了栈的存储能力。</p>
+</blockquote>
+<p>3.意义：提高程序的运行速度</p>
+<blockquote>
+<p>1.尽量把那些不需要分配到堆上的变量直接分配到栈上；<br>
+2.堆上的变量少了，会减轻分配堆内存的开销；<br>
+3.同时也会减少gc的压力；</p>
+</blockquote>
+<pre><code># 观察变量逃逸情况
+go build -gcflags '-m' [file]
+</code></pre>
+<p>4.注意</p>
+<blockquote>
+<p>不要盲目使用变量的指针作为函数参数，虽然它会减少复制操作。但其实当参数为变量自身的时候，复制是在栈上完成的操作，开销远比变量逃逸后动态地在堆上分配内存少的多。</p>
+</blockquote>
+<h5 id="2堆与栈">2.堆与栈</h5>
+<blockquote>
+<p>1.变量都存放在内存中<br>
+2.内存给变量开辟了2块区域，堆区域、栈区域</p>
+</blockquote>
+<p>1.栈</p>
+<blockquote>
+<p>1.开口向上，后入先出。速度快，容量小<br>
+3.存储局部变量，生命周期一结束就释放。for循环内部定义的也是局部变量</p>
+</blockquote>
+<p>2.堆</p>
+<blockquote>
+<p>1.速度稍慢，容量比较大<br>
+2.堆中变量不是随时释放，需要垃圾回收机制释放</p>
+</blockquote>
+<p>3.区别</p>
+<blockquote>
+<p>1.栈上的内存分配比堆上快很多。<br>
+栈分配内存只需要两个CPU指令：“PUSH”和“RELEASE”，分配和释放；<br>
+堆分配内存首先需要去找到一块大小合适的内存块，之后要通过垃圾回收才能释放；<br>
+2.堆不像栈可以自动清理。它会引起Go频繁地进行垃圾回收，而垃圾回收会占用比较大的系统开销（占用CPU容量的25%）</p>
+</blockquote>
+<h3 id="3基本数据类型">3.基本数据类型</h3>
+<h4 id="1数字类型">1.数字类型</h4>
+<h5 id="1整型浮点型">1.整型，浮点型</h5>
+<p>1.基于架构的类型，int,uint,uintptr</p>
+<blockquote>
+<p>1.int,uint 在32位系统上，使用32位(4字节)；64位系统上，使用64位(8字节)<br>
+2.uintptr 长度被设定存放一个指针即可</p>
+</blockquote>
+<p>2.整形 int</p>
+<blockquote>
+<p>符号整形：int8(-128 -&gt; 127),int16,int32,int64<br>
+无符号整形：uint8(0 -&gt; 255),uint16,uint32,uint64</p>
+</blockquote>
+<p>3.浮点型</p>
+<blockquote>
+<p>1.没有 float 类型，只有 float32 和 float64<br>
+2.float32 只能精准到后6位，有效数字7位。最大数字，以科学记数法算，因有效数字7位，最大值8位<br>
+3.float64 只能精准到后15位，有效数字16位。最大数字，以科学记数法算，因有效数字16位，最大值17位<br>
+精度主要取决于尾数部分的位数。</p>
+</blockquote>
+<ul>
+<li>
+<p>1.解释 float32，4字节，64位系统中 32位，1位表示符号，8位表示指数，剩余23位表示尾数。最小值2^-23，转成10进制 1.19*10^-7，所以有效数字7位，小数点前要有1位，精度6位</p>
+</li>
+<li>
+<p>2.解释 float64，8字节，64位系统中 64位，1位表示符号，11位表示指数，剩余52位表示尾数。最小值2^-52，转成10进制 2.22*10^-16，所以有效数字16位，小数点前要有1位，精度15位</p>
+</li>
+</ul>
+<h4 id="2byterune-与-字符串">2.byte，rune 与 字符串</h4>
+<h5 id="1字符">1.字符</h5>
+<blockquote>
+<p>1.byte 类型是 uint8 别名(ASCII 编码)<br>
+2.runes 类型是 uint32 别名(Unicode 编码)</p>
+</blockquote>
+<ul>
+<li>
+<p>1.解释1 byte，占1字节，8位。uint8也是8位，本质没有区别</p>
+</li>
+<li>
+<p>2.解释2 rune，占4字节，32位。uint32也是32位，本质没有区别</p>
+</li>
+<li>
+<p>3.解释3 既然 byte和uint8，rune和uint32 没有区别，为什么多出这2个类型？因uint8,uint32看起来是个数值，实际可表示一个字符。所以有了别名类型 byte,rune</p>
+</li>
+<li>
+<p>4.解释4 单引号表示字符，双引号表示字符串</p>
+</li>
+</ul>
+<pre><code>var a byte = 65 //A 的ASCII 的编号为 65
+var b byte = 'A'//a,b相同。注意此处是字符A，而不是字符串
+# 因 byte 长度有限，2^8=256个，所以表示中文，需要使用 rune
+var name rune = '中'
+</code></pre>
+<h5 id="2字符串-string">2.字符串 string</h5>
+<blockquote>
+<p>1.字符串是 UTF-8 字符的一个序列，即多个字符的拼接（当字符为 ASCII 码时则占用 1 个字节，其它字符根据需要占用 2-4 个字节)<br>
+2.字符串的本质是一个 byte 数组<br>
+3.字符串不可变，即str[index] 不可重新赋值，需要先转成数组，赋值，再转成字符串</p>
+</blockquote>
+<pre><code># str1=str2，字符串的本质是一个 byte 数组
+var str1 string = &quot;hello&quot;
+var str2 = []byte{104, 101, 108, 108, 111} 
+</code></pre>
+<h6 id="1包">1.包</h6>
+<p>1.strings</p>
+<blockquote>
+<p>字符串操作</p>
+</blockquote>
+<p>2.strconv</p>
+<blockquote>
+<p>类型转换。</p>
+</blockquote>
+<h4 id="2指针-intp">2.指针 intP</h4>
+<blockquote>
+<p>1.指针通常用十六进制数表示，指向内存中存放值的地址<br>
+2.&amp;变量，获取指针地址；*指针，获取指针对应变量的值</p>
+</blockquote>
+<pre><code># 指针声明
+# 1.先声明变量，再获取变量指针
+a := 1
+ptr := &amp;a //&amp;变量，获取变量指针
+
+# 2.new()，声明指针
+b := new(string) //指针
+*b = &quot;test&quot;      //给指针赋值
+</code></pre>
+<h5 id="3字符串拼接">3.字符串拼接</h5>
+<pre><code># 1.+
+s1 := &quot;字符串&quot;
+s2 := &quot;拼接&quot;
+s3 := s1 + s2
+fmt.Print(s3) //s3 = &quot;打印字符串&quot;
+
+# 2.sprintf函数
+s1 := &quot;字符串&quot;
+s2 := &quot;拼接&quot;
+s3 := fmt.Sprintf(&quot;%s%s&quot;, s1, s2) //s3 = &quot;打印字符串&quot;
+
+# 3.Join函数
+//需要先导入strings包
+s1 := &quot;字符串&quot;
+s2 := &quot;拼接&quot;
+//定义一个字符串数组包含上述的字符串
+var str []string = []string{s1, s2}
+//调用Join函数
+s3 := strings.Join(str, &quot;&quot;)
+fmt.Print(s3)
+
+# 4.buffer.WriteString函数（性能就要大大优于上面）
+//需要先导入bytes包
+s1 := &quot;字符串&quot;
+s2 := &quot;拼接&quot;
+//定义Buffer类型
+var bt bytes.Buffer
+向bt中写入字符串
+bt.WriteString(s1)
+bt.WriteString(s2)
+//获得拼接后的字符串
+s3 := bt.String()
+
+# 5.buffer.Builder（官方建议，性能同4）
+//需要先导入Strings包
+s1 := &quot;字符串&quot;
+s2 := &quot;拼接&quot;
+var build strings.Builder
+build.WriteString(s1)
+build.WriteString(s2)
+s3 := build.String()
+</code></pre>
+<h3 id="4数组">4.数组</h3>
+<h4 id="1概念">1.概念</h4>
+<p>1.数组：具有相同唯一类型的一组已编号且长度固定的数据项序列<br>
+2.数组长度也是数组类型的一部分，所以 [5]int 和 [10]int 属于不同类型</p>
+<pre><code># 数组长度是定长的，声明是需要声明长度，也可省略，自行判断长度
+# 以下三种声明都行
+var arr1 = [5]int{1, 2, 3, 4, 5}
+var arr2 = [...]int{1, 2, 3, 4, 5}
+var arr3 = []int{1, 2, 3, 4, 5}
+
+# 每种基础数据类型默认值，可以不声明，但是实际起效
+var arr4 = [5]{3:'d', 4:'e'}
+var arr4 = []{3:'d', 4:'e'}
+</code></pre>
+<h4 id="2多维数组">2.多维数组</h4>
+<p>1.内部数组的长度相同</p>
+<pre><code>var arr1 [3][4]int
+</code></pre>
+<h4 id="3数组传递">3.数组传递</h4>
+<p>1.直接数组传递，会消耗很大内存，2种方式优化</p>
+<blockquote>
+<p>1.传递指针 &amp;key<br>
+2.使用数组的切片 arr1[:] 常用</p>
+</blockquote>
+<pre><code>var arr1 = []int{1,2,3}
+
+func func1(&amp;arr1){}
+func func2(arr1[:]){}
+</code></pre>
+<h3 id="5切片-slice">5.切片 slice</h3>
+<h4 id="1概念-2">1.概念</h4>
+<p>1.切片：对数组一个连续片段的引用，终止索引标识的项不包括在切片内<br>
+2.切片：是一个长度可变的数组。可在数组长度内随时扩大、缩小<br>
+3.计算切片最大长度 cap()<br>
+4.注意：绝对不能用指针指向切片，因为切片本身已经是个指针</p>
+<pre><code># 声明格式。start为0，end为最大长度时可省略
+var slice1 []type = arr1[start:end]
+# 例
+var slice2 = []int{1,2,3}[:]
+
+# 例
+var arr1 = []int{1,2,3,4,5,6}
+var slice1 = arr1[1,4]  //[]int{2,3,4}
+slice2 := slice1[:]     //[]int{2,3,4}
+slice3 := slice1[:5]    //[]int{2,3,4,5,6}
+slice3 := slice1[:6]    //错误，下标越界
+slice3 := slice1[2:4]   //[]int{4,5}
+# 切片可在数组长度内随时扩大、缩小；但是不能重新分片获取数组前一个元素
+</code></pre>
+<h4 id="2传递给函数">2.传递给函数</h4>
+<p>数组传递给函数，推荐使用切片 arr1[:]</p>
+<pre><code>func sum(a []int) int {
+    s := 0
+    for i := 0; i &lt; len(a); i++ {
+        s += a[i]
+    }
+    return s
+}
+
+func main(){
+    var arr1 = [5]int{0, 1, 2, 3, 4}
+    sum(arr1[:])
+}
+</code></pre>
+<h4 id="3创建切片">3.创建切片</h4>
+<h5 id="1make-与-new">1.make() 与 new()</h5>
+<blockquote>
+<p>数组未定义时，可以通过 make(),new() 创建切片</p>
+</blockquote>
+<pre><code>var slice1 []type = make([]type, len, cap)
+# 例
+var slice1 = make([]int, 10)
+var slice2 = new([10]int)[:]
+</code></pre>
+<h5 id="2二者区别">2.二者区别</h5>
+<blockquote>
+<p>1.new(T) 返回一个类型为T，值为0的地址的指针<br>
+2.make(T) 返回一个类型为T的初始值</p>
+</blockquote>
+<h4 id="4多维切片">4.多维切片</h4>
+<p>内层的切片必须单独分配(通过make函数)</p>
+<h4 id="5for-range-遍历">5.for-range 遍历</h4>
+<pre><code># 遍历切片 slice1。索引i，值value，
+# 注1：value只是切片中某个索引位置值的拷贝，不能修改切片该索引位置的值
+for i, value := range slice1 {
+    fmt.Printf(&quot;slice at %d is %d\n&quot;, i, value)
+}
+# 注2：i不可省略，如果不使用 _ 空白标识符替代，value 可以省略
+for i := range slice2 {
+    fmt.Printf(&quot;%d&quot;, i)
+}
+</code></pre>
+<h4 id="6复制-追加-切片">6.复制 &amp; 追加 切片</h4>
+<p>1.复制 copy()</p>
+<pre><code>copy(dst, src []T) //将 src 拷贝到 dst，覆盖 dst。拷贝个数为 src 与 dst 的最小长度
+</code></pre>
+<p>2.追加 append()</p>
+<pre><code># 元素追加到切片，并返回新切片。元素数量不再受原数组限制，可能指向一个新数组
+# append 方法总是返回成功，除非系统内存耗尽了。
+slice1 := []int{1, 2, 3}
+slice2 = append(slice1, 4, 5, 6)//元素追加到切片，并返回新切片
+</code></pre>
+<h3 id="6bytes-包">6.bytes 包</h3>
+<p>类型 buffer</p>
+<pre><code># 定义，3种方式
+import &quot;bytes&quot;
+
+var buffer bytes.Buffer
+var r *bytes.Buffer = new(bytes.Buffer)
+func NewBuffer(buf []byte) *Buffer
+</code></pre>
+<h4 id="1string-与-buffer-串联">1.string 与 buffer 串联</h4>
+<pre><code># 注比 += 更节省内存和cpu。字符串数量越多越明显
+buffer.WriteString(s) //将字符串s，串联在 buffer 后
+buffer.String()       //再将 buffer 转成 string
+</code></pre>
+<h3 id="7字典-map">7.字典 map</h3>
+<p>map 可以动态增长</p>
+<h4 id="1创建-make">1.创建 make()</h4>
+<blockquote>
+<p>不要用 new，永远用 make构造map。<br>
+因：new() 分配一个引用对象，得到一个空引用指针(相当于声明一个未初始化的变量)，赋值时会报错。需要先 make()初始化，才能赋值</p>
+</blockquote>
+<pre><code># 1.内存用make分配
+var map1 = make(map[keytype]valtype)
+# 简写
+var map1 = map[keytype]valtype
+# 例：赋值
+var map1 map[string]int
+map1 = map[string]int{&quot;one&quot;: 1, &quot;two&quot;: 2}
+map1[&quot;three&quot;] = 3
+
+# 2.value可以是任意类型
+map2 := map[int]func() int{
+    1: func() int { return 10 },
+    2: func() int { return 20 },
+    3: func() int { return 30 },
+}
+</code></pre>
+<h4 id="2性能">2.性能</h4>
+<blockquote>
+<p>1.map传递给函数代价很小，32位机器上4个字节，64位机器上8个字节，无论map实际存储了多少数据<br>
+2.map中用key查找值很快，比线性查找快很多，但是仍然比数组、切片慢100倍。建议用切片解决问题</p>
+</blockquote>
+<h4 id="3健值是否存在删除">3.健值是否存在，删除</h4>
+<pre><code># 1.是否存在。
+# val1 是值(不存在时值为空值，但可能本身就是空值)，isPresent 是否存在，布尔
+val1, isPresent = map1[key1]
+
+# 2.删除。不存在不会报错
+delete(map1, key1)
+</code></pre>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-3cheng-xu-de-ji-ben-jie-gou-he-yao-su/">
+              <span class="post-title">
+                go学习-3.程序的基本结构和要素&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://wo-wo.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>石强博客</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

@@ -9,14 +9,14 @@
   <meta name="keywords" content="">
   <meta name="description" content="">
   <meta name="author" content="kveln">
-  <title>关于 | 石强博客</title>
+  <title>go学习-13.解析命令行选项-flag | 石强博客</title>
   <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
   <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
   <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
   <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
   <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-  <link rel="alternate" type="application/rss+xml" title="关于 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="go学习-13.解析命令行选项-flag | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
   <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
   <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
   <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
@@ -25,8 +25,8 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-    <meta property="og:description" content="关于"/>
-    <meta property="og:url" content="https://wo-wo.github.io/post/about/"/>
+    <meta property="og:description" content="go学习-13.解析命令行选项-flag"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-13jie-xi-ming-ling-xing-xuan-xiang-flag/"/>
     <meta property="og:locale" content="zh-CN"/>
     <meta property="og:type" content="website"/>
     <meta property="og:site_name" content="石强博客"/>
@@ -80,11 +80,13 @@
           <div class="post-heading">
           	<span class="tags">
           	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
         </span>
-            <h1>关于</h1>
+            <h1>go学习-13.解析命令行选项-flag</h1>
             <span class="meta">
             	Posted on
-              2019-01-25，1 min read
+              2021-10-12，5 min read
             </span>
           </div>
         </div>
@@ -97,15 +99,205 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-          <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+          <p>[toc]</p>
+<p><a href="https://zhuanlan.zhihu.com/p/102576818">Go 每日一库之 flag</a></p>
+<blockquote>
+<p>（标准库，简单实用）</p>
 </blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+<h4 id="1快速开始">1.快速开始</h4>
+<p>1.编写测试文件 flag.go</p>
+<pre><code>package main
+
+import (
+	&quot;flag&quot;
+	&quot;fmt&quot;
+)
+
+var (
+	intflag int
+	boolflag bool
+	stringflag string
+)
+
+func init()  {
+	//flag.TypeVar 定义全局变量，存储命令行选项
+	//Type 为基本数据类型、时间间隔time.Duration
+	//参数：变量地址、命令行选项名、默认值、-h帮助信息；
+	flag.IntVar(&amp;intflag, &quot;initflag&quot;, 1, &quot;int flag value&quot;)
+	flag.BoolVar(&amp;boolflag, &quot;boolflag&quot;, false, &quot;bool flag value&quot;)
+	flag.StringVar(&amp;stringflag, &quot;stringflag&quot;, &quot;&quot;, &quot;string flag value&quot;)
+}
+
+func main(){
+	//必须在所有选项都定义之后调用，调用之后不能再定义选项
+	//从os.Args[1:]中解析选项
+	flag.Parse()
+
+	fmt.Println(&quot;intfalg is:&quot;, intflag)
+	fmt.Println(&quot;boolflag is:&quot;, boolflag)
+	fmt.Println(&quot;stringflag is:&quot;, stringflag)
+}
+</code></pre>
+<p>2.执行</p>
+<pre><code># 查看帮助信息
+go run flag.go -h
+# 使用
+go run flag.go -boolflag true
+</code></pre>
+<h4 id="2选项格式">2.选项格式</h4>
+<blockquote>
+<ul>
+<li>和 -- 都可以。-表示短选项，--表示长选项。flag不区分</li>
+</ul>
+</blockquote>
+<pre><code>-flag   //只支持布尔型
+-flag x //不支持布尔型。因此样式的布尔型在类 Unix 系统中可能会出现意想不到的行为
+-flag=x
+</code></pre>
+<p>1.遇到第一个非选项参数（即不是以-和--开头的）或终止符--，解析停止</p>
+<pre><code># 非选项参数a，解析终止
+go run flag.go a -boolflag true
+# 终止符--，解析终止
+go run flag.go -- -boolflag true
+</code></pre>
+<p>2.解析终止后的命令行参数，flag会保存下来</p>
+<pre><code># 修改上述main函数
+********
+func main(){
+	//必须在所有选项都定义之后调用，调用之后不能再定义选项
+	//从os.Args[1:]中解析选项
+	flag.Parse()
+
+	//解析终止后，flag会保存后续的命令行参数
+	//flag.NArg()：后续参数个数
+	//flag.Arg(i)：获取后续第i个参数（参数名或值）
+	for i := 0; i &lt; flag.NArg(); i++ {
+		fmt.Printf(&quot;Argument %d: %s\n&quot;, i, flag.Arg(i))
+	}
+	//flag.Args()：后续参数的切片
+	fmt.Println(flag.Args())
+	for j, val := range flag.Args(){
+		fmt.Printf(&quot;Argument %d: %s\n&quot;, j, val)
+	}
+}
+********
+</code></pre>
+<p>执行</p>
+<pre><code>go run flag.go -- -boolflag true --stringflag aa
+</code></pre>
+<h4 id="3定义选项方式2">3.定义选项方式2</h4>
+<ul>
+<li>1.flag.TypeVar：需要先定义变量</li>
+<li>2.flag.Type：自动分配变量，返回该变量地址</li>
+</ul>
+<pre><code># 与上一种方式基本类似
+package main
+
+import (
+	&quot;flag&quot;
+	&quot;fmt&quot;
+)
+
+var (
+	intflag *int
+	boolflag *bool
+	stringflag *string
+)
+
+func init()  {
+	//flag.Type：自动分配变量，返回该变量的地址。需要接收参数
+	intflag = flag.Int(&quot;initflag&quot;, 1, &quot;int flag value&quot;)
+	boolflag = flag.Bool(&quot;boolflag&quot;, false, &quot;bool flag value&quot;)
+	stringflag =flag.String(&quot;stringflag&quot;, &quot;&quot;, &quot;string flag value&quot;)
+}
+
+func main(){
+	//必须在所有选项都定义之后调用，调用之后不能再定义选项
+	//从os.Args[1:]中解析选项
+	flag.Parse()
+
+	fmt.Println(&quot;intfalg is:&quot;, *intflag)
+	fmt.Println(&quot;boolflag is:&quot;, *boolflag)
+	fmt.Println(&quot;stringflag is:&quot;, *stringflag)
+}
+</code></pre>
+<h4 id="4定义短选项">4.定义短选项</h4>
+<blockquote>
+<p>没有显示支持短选项，可以通过两个选项共享同一个变量实现</p>
+</blockquote>
+<pre><code>package main
+
+import (
+	&quot;flag&quot;
+	&quot;fmt&quot;
+)
+
+var longLevel string
+
+func init()  {
+	const (
+		defaultValue = &quot;a&quot;
+		usage = &quot;set longType value&quot;
+	)
+
+	//两个选项共享同一个变量
+	//注意是：长选项与短选项（2个选项具有相同意义）
+	//而不是短标识选项 l（短标识只需要定义一次就行）
+	flag.StringVar(&amp;longLevel,&quot;long_type&quot;, defaultValue, usage)
+	flag.StringVar(&amp;longLevel,&quot;l&quot;, defaultValue, usage + &quot;short link&quot;)
+}
+
+func main()  {
+	flag.Parse()
+
+	fmt.Println(&quot;log level is:&quot;, longLevel)
+}
+</code></pre>
+<p>执行</p>
+<pre><code>go run flag_short_link.go -l test
+go run flag_short_link.go -long_type test
+</code></pre>
+<h4 id="5解析时间间隔">5.解析时间间隔</h4>
+<blockquote>
+<p>还支持time.Duration类型：时间间隔<br>
+格式：ns/us/ms/s/m/h/day 等。例&quot;300ms&quot;、&quot;-1.5h&quot;、&quot;2h45m&quot;</p>
+</blockquote>
+<pre><code>package main
+
+import (
+	&quot;flag&quot;
+	&quot;fmt&quot;
+	&quot;time&quot;
+)
+
+var period time.Duration
+
+func init()  {
+	flag.DurationVar(&amp;period,&quot;period&quot;, 1*time.Second, &quot;sleep period&quot;)
+}
+
+func main()  {
+	flag.Parse()
+
+	fmt.Printf(&quot;start sleep period %d\n&quot;, period)
+	time.Sleep(period)
+	fmt.Printf(&quot;sleep end\n&quot;)
+}
+</code></pre>
+<p>执行</p>
+<pre><code>go run flag_time.go 
+go run flag_time.go -period 1m30s
+</code></pre>
 
           
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-12go-mod/">
+              <span class="post-title">
+                go学习-12.go mod&rarr;
+              </span>
+            </a>
+          </p>
+        
         <div class="comment">
           
         </div>

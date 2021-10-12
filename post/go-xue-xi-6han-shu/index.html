@@ -9,14 +9,14 @@
   <meta name="keywords" content="">
   <meta name="description" content="">
   <meta name="author" content="kveln">
-  <title>关于 | 石强博客</title>
+  <title>go学习-6.函数 | 石强博客</title>
   <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
   <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
   <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
   <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
   <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-  <link rel="alternate" type="application/rss+xml" title="关于 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="go学习-6.函数 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
   <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
   <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
   <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
@@ -25,8 +25,8 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-    <meta property="og:description" content="关于"/>
-    <meta property="og:url" content="https://wo-wo.github.io/post/about/"/>
+    <meta property="og:description" content="go学习-6.函数"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-6han-shu/"/>
     <meta property="og:locale" content="zh-CN"/>
     <meta property="og:type" content="website"/>
     <meta property="og:site_name" content="石强博客"/>
@@ -80,11 +80,13 @@
           <div class="post-heading">
           	<span class="tags">
           	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
         </span>
-            <h1>关于</h1>
+            <h1>go学习-6.函数</h1>
             <span class="meta">
             	Posted on
-              2019-01-25，1 min read
+              2021-10-12，5 min read
             </span>
           </div>
         </div>
@@ -97,15 +99,200 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-          <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+          <p>[toc]</p>
+<h3 id="1函数">1.函数</h3>
+<h4 id="1参数与返回值">1.参数与返回值</h4>
+<h5 id="1参数">1.参数</h5>
+<p>1.规范</p>
+<blockquote>
+<p>1.参数建议传递指针，而不是副本；<br>
+2.切片（slice）、字典（map）、接口（interface）、通道（channel）这样的引用类型都是默认使用引用传递（指针）；</p>
 </blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+<p>2.变长参数</p>
+<blockquote>
+<p>1.函数的最后一个参数是 ...type，就可以处理一个变长的参数，这个长度可以为 0。函数称为变长函数</p>
+</blockquote>
+<pre><code>func f(a, b, arg ...int){}
+</code></pre>
+<h5 id="2返回值">2.返回值</h5>
+<p>1.命名与非命名返回值</p>
+<blockquote>
+<p>1.非命名返回值，多个需要使用 () 包含；<br>
+2.命名返回值，即使只有1个，也需要使用 () 包含；<br>
+3.命名返回值，函数调用之前已经初始化返回值为对应类型的零值；<br>
+4.命名返回值，return 不用再接返回变量，自动返回命名的返回值<br>
+5.return 或 return var都可以；但是 return var = expresion(表达式) 会编译错误</p>
+</blockquote>
+<pre><code># 非命名返回值
+func f1(a int) (int, int) {
+    return a*2, a*3
+}
+# 命名返回值
+func f2(b int) (c int, d int) {
+    c = b*2
+    d = b*3
+    return
+}
+</code></pre>
+<h5 id="2变长参数">2.变长参数</h5>
+<p>1.类型相同：切片传递<br>
+2.类型不同：结构 struct，接口 interface 2种传递方式</p>
+<pre><code># 变长参数声明
+fun min(s ...int) int {
+}
+# 切片通过 slice... 传递变长参数
+slice := []int{1, 3, 5}
+x = min(slice...);
+</code></pre>
+<h5 id="3函数参数">3.函数参数</h5>
+<p>1.声明 f fun(...type)，参数与被回调函数一致</p>
+<pre><code>fun Add(a, b int){}
+
+fun callback(y int, f fun(int, int)){
+    f(y, 2)
+}
+
+callback(1, Add)
+</code></pre>
+<h4 id="2defer">2.defer</h4>
+<blockquote>
+<p>参见流程控制 defer。相当于其它语言的 finally</p>
+</blockquote>
+<h4 id="3内置函数">3.内置函数</h4>
+<p>1.new() 与 make()</p>
+<blockquote>
+<p>1.new 和 make 均是用于分配内存<br>
+2.new 用于值类型和用户定义的类型，如自定义结构；make 用于内置引用类型（切片、map 和管道），不能有其它类型，如结构体<br>
+3.new (T) 分配类型 T 的零值并返回指针<br>
+4.make (T) 返回类型 T 的初始化之后的值</p>
+</blockquote>
+<h4 id="4递归函数">4.递归函数</h4>
+<p>1.大量的递归调用导致的程序栈内存溢出</p>
+<blockquote>
+<p>使用 管道（channel）和 goroutine 实现懒惰求值解决</p>
+</blockquote>
+<h4 id="5闭包">5.闭包</h4>
+<p>1.匿名函数调用 ()。如果有参数，传入参数 (...params)</p>
+<pre><code># 声明匿名函数，且执行
+fun(){return 1 + 2}()
+fun(a, b int){return a + b}(1, 2)
+</code></pre>
+<h3 id="2结构体">2.结构体</h3>
+<h4 id="1定义">1.定义</h4>
+<p>1.结构体中字段（属性），可以是任何类型：简单类型，复合类型，函数，结构体，接口<br>
+2.结构体中字段（属性），可以用点符号赋值、获取。这叫选择器<br>
+3.结构体和它所包含的数据在内存中是以连续块的形式存在的(selector)<br>
+4.结构体只有首字母大写字段才能被设置</p>
+<pre><code>type s_type struct {
+    field1 type1
+    field2 type2
+}
+# 第一种初始化方法
+a := new(s_type)
+a.field1 = 1
+a.field2 = &quot;a&quot;
+# 第二种初始化
+var a s_type
+a = s_type{1, &quot;a&quot;}
+# 第三种初始化
+# new(type) 等价 &amp;type{}。&amp;不是必须的，可省
+a := &amp;s_type{1, &quot;a&quot;}
+a := s_type{1, &quot;a&quot;}
+</code></pre>
+<h4 id="2递归结构体">2.递归结构体</h4>
+<p>1.可以通过引用自身。这在定义链表或二叉树的元素（通常叫节点）时特别有用</p>
+<pre><code>type s_struct struct {
+    data float64
+    su   *s_struct
+}
+</code></pre>
+<h4 id="3匿名字段-命名冲突">3.匿名字段 &amp; 命名冲突</h4>
+<h5 id="1匿名字段">1.匿名字段</h5>
+<p>1.在一个结构体中对于每一种数据类型只能有一个匿名字段。</p>
+<pre><code>type s_struct struct {
+    a int
+    int
+    c float32
+}
+
+s := new(s_struct)
+s.a = 6
+s.int = 10
+s.c = 7.5
+
+fmt.Printf(&quot;%d&quot;, s.int)
+</code></pre>
+<h5 id="2命名冲突">2.命名冲突</h5>
+<p>1.外层名字会覆盖内层名字（但是两者的内存空间都保留），这提供了一种重载字段或方法的方式；<br>
+2.如果同层，且名字被使用，则报错</p>
+<pre><code>type A struct{a int}
+type B struct{a, b int}
+
+type C struct{A; B}
+var c C
+c.a //报错
+</code></pre>
+<h4 id="4方法">4.方法</h4>
+<h5 id="1方法-值-指针">1.方法、值、指针</h5>
+<p>1.结构体就像是类的一种简化形式<br>
+2.指针方法和值方法都可以在指针或非指针上被调用</p>
+<pre><code>type A struct {
+    a int
+}
+# 值拷贝（值方法）
+fun (this A) Add(b int) int {
+    return this.a + b
+}
+# 指针（指针方法）
+fun (this *A) Sum(b int) int {
+    return this.a + b
+}
+
+func main() {
+    var a1 A //值
+    a1.a = 1
+    a1.Add(1)
+    fmt.Printf(&quot;%d&quot;, a1.Sum())
+    
+    a2 := new(A) //指针
+    a2.a = 1
+    a2.Add(1)
+    fmt.Printf(&quot;%d&quot;, a2.Sum())
+}
+</code></pre>
+<h5 id="2多重继承">2.多重继承</h5>
+<p>1.多重继承指的是类型获得多个父类型行为的能力</p>
+<pre><code>type Camera struct {}
+
+func (c *Camera) TakeAPicture() string {
+    return &quot;Click&quot;
+}
+
+type Phone struct{}
+
+func (p *Phone) Call() string {
+    return &quot;Ring Ring&quot;
+}
+
+type CameraPhone struct {
+    Camera
+    Phone
+}
+
+cp := new(CameraPhone)
+cp.TakeAPicture()
+cp.Call()
+</code></pre>
 
           
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-5liu-cheng-kong-zhi/">
+              <span class="post-title">
+                go学习-5.流程控制&rarr;
+              </span>
+            </a>
+          </p>
+        
         <div class="comment">
           
         </div>

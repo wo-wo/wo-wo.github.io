@@ -9,14 +9,14 @@
   <meta name="keywords" content="">
   <meta name="description" content="">
   <meta name="author" content="kveln">
-  <title>关于 | 石强博客</title>
+  <title>go学习-10.携程与信道 | 石强博客</title>
   <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
   <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
   <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
   <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
   <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-  <link rel="alternate" type="application/rss+xml" title="关于 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="go学习-10.携程与信道 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
   <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
   <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
   <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
@@ -25,8 +25,8 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-    <meta property="og:description" content="关于"/>
-    <meta property="og:url" content="https://wo-wo.github.io/post/about/"/>
+    <meta property="og:description" content="go学习-10.携程与信道"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-10xi-cheng-yu-xin-dao/"/>
     <meta property="og:locale" content="zh-CN"/>
     <meta property="og:type" content="website"/>
     <meta property="og:site_name" content="石强博客"/>
@@ -80,11 +80,13 @@
           <div class="post-heading">
           	<span class="tags">
           	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
         </span>
-            <h1>关于</h1>
+            <h1>go学习-10.携程与信道</h1>
             <span class="meta">
             	Posted on
-              2019-01-25，1 min read
+              2021-10-12，3 min read
             </span>
           </div>
         </div>
@@ -97,15 +99,87 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-          <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+          <h3 id="1协程">1.协程</h3>
+<p>1.开启协程 go</p>
+<blockquote>
+<p>协程是通过使用关键字 go 调用（或执行）一个函数或者方法来实现的（也可以是匿名或者 lambda 函数<br>
+在相同的地址空间中并且分配了独立的栈;协程的栈会根据需要进行伸缩，不会出现栈溢出；</p>
 </blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+<pre><code>go sum(... int){...}
+</code></pre>
+<p>2.性能提升 GOMAXPROCS</p>
+<blockquote>
+<p>如果有 n 个核心，会设置 GOMAXPROCS 为 n-1 以获得最佳性能</p>
+</blockquote>
+<pre><code>runtime.GOMAXPROCS(2)
+</code></pre>
+<h3 id="2协程间通讯">2.协程间通讯</h3>
+<h4 id="1通道-chan">1.通道 chan</h4>
+<h5 id="1声明">1.声明</h5>
+<blockquote>
+<p>1.先进先出（FIFO）<br>
+2.双类型：信道 + 信道传输类型（所有类型都可以用于通道）</p>
+</blockquote>
+<pre><code>var ch1 chan string
+ch1 = make(chan string)
+ch2 := make(chan string)
+ch3 := make(chan int)
+ch4 := chan fun()
+</code></pre>
+<h5 id="2通信操作符-">2.通信操作符 &lt;-</h5>
+<blockquote>
+<p>协程中可以通过通道输出结果</p>
+</blockquote>
+<pre><code>ch &lt;- int1 //用通道 ch 发送变量 int1
+int2 := &lt;- ch //变量 int2 从通道 ch接收数据
+
+# &lt;- ch 可以单独调用获取通道的（下一个）值，当前值会被丢弃，
+if &lt;- ch != 1000{
+    ...
+}
+</code></pre>
+<h5 id="3通道阻塞">3.通道阻塞</h5>
+<blockquote>
+<p>1.对于同一个通道，发送操作（协程或者函数中的），在接收者准备好之前是阻塞的<br>
+2.对于同一个通道，接收操作是阻塞的（协程或函数中的），直到发送者可用：如果通道中没有数据，接收者就阻塞了</p>
+</blockquote>
+<h5 id="4协程同步">4.协程同步</h5>
+<p>1.无缓存通道</p>
+<blockquote>
+<p>通信是一种同步形式：通过通道，两个协程在通信（协程会和）中某刻同步交换数据。<br>
+无缓冲通道成为了多个协程同步的完美工具。</p>
+</blockquote>
+<p>2.带缓冲的通道</p>
+<blockquote>
+<p>给通道提供了一个缓存，可以在扩展的 make 命令中设置它的容量<br>
+在缓冲满载（缓冲被全部使用）之前，给一个带缓冲的通道发送数据是不会阻塞的，而从通道读取数据也不会阻塞，直到缓冲空了。</p>
+</blockquote>
+<pre><code># 通道可以同时容纳 100 个元素
+ch1 := make(chan string, 100)
+</code></pre>
+<h5 id="5关闭通道">5.关闭通道</h5>
+<blockquote>
+<p>只有发送者需要关闭通道，接收者永远不会需要。</p>
+</blockquote>
+<pre><code># 关闭通道
+close(ch)
+# 检测通道是否关闭
+v, _ := &lt;-ch
+# 或 for range。会自动检测通道是否关闭
+for input := range ch {
+    process(input)
+}
+</code></pre>
 
           
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-9du-xie-shu-ju/">
+              <span class="post-title">
+                go学习-9.读写数据&rarr;
+              </span>
+            </a>
+          </p>
+        
         <div class="comment">
           
         </div>

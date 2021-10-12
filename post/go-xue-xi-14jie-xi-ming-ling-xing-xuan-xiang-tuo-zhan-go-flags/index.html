@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>go学习-14.解析命令行选项-拓展-go-flags | 石强博客</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="go学习-14.解析命令行选项-拓展-go-flags | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="go学习-14.解析命令行选项-拓展-go-flags"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-14jie-xi-ming-ling-xing-xuan-xiang-tuo-zhan-go-flags/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="石强博客"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://wo-wo.github.io">石强博客</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://wo-wo.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
+        </span>
+            <h1>go学习-14.解析命令行选项-拓展-go-flags</h1>
+            <span class="meta">
+            	Posted on
+              2021-10-12，6 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>[toc]</p>
+<p><a href="https://zhuanlan.zhihu.com/p/102579462">Go 每日一库之 go-flags</a></p>
+<blockquote>
+<p>（第三方库，非常强大）<br>
+利用结构标签（struct tag）和反射提供了一个方便、简洁的接口</p>
+</blockquote>
+<h4 id="1与flag比较">1.与flag比较</h4>
+<p>#####1.flag缺点</p>
+<ul>
+<li>
+<p>1.不显示支持短选项</p>
+<blockquote>
+<p>可以将两个选项共享同一个变量迂回实现</p>
+</blockquote>
+</li>
+<li>
+<p>2.选项变量的定义比较繁琐</p>
+<blockquote>
+<p>每个选项都需要根据类型调用对应的Type或TypeVar函数</p>
+</blockquote>
+</li>
+<li>
+<p>3.默认只支持有限的数据类型</p>
+<blockquote>
+<p>基本类型bool/int/uint/string和time.Duration</p>
+</blockquote>
+</li>
+</ul>
+<p>#####2.go-flags 丰富特性</p>
+<ul>
+<li>1.支持短选项（-v）和长选项（--verbose）</li>
+<li>2.支持短选项合写，如-aux</li>
+<li>3.同一个选项可以设置多个值</li>
+<li>4.支持所有的基础类型和 map 类型，甚至是函数</li>
+<li>5.支持命名空间和选项组</li>
+<li>等等</li>
+</ul>
+<h4 id="2快速开始">2.快速开始</h4>
+<p>1.安装库</p>
+<pre><code>go get github.com/jessevdk/go-flags
+</code></pre>
+<p>2.编写测试文件</p>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/jessevdk/go-flags&quot;
+)
+
+type Option struct {
+	//设置短、长选项名字、帮助信息。传参时短选项前加-，长选项前加--
+	//定义布尔值切片，所以选项可以多个
+	Verbose []bool `short:&quot;v&quot; long:&quot;verbose&quot; description:&quot;Show verbose message&quot;`
+}
+
+func main()  {
+	var opt Option
+	flags.parse(&amp;opt)
+
+	fmt.Println(opt.Verbose)
+}
+</code></pre>
+<p>执行</p>
+<pre><code># 短、长选项
+go run go_flags.go -v
+go run go_flags.go --verbose
+# 选项是切片，可以多个
+go run go_flags.go -v --verbose
+go run go_flags.go -vv
+</code></pre>
+<h4 id="3基本特性">3.基本特性</h4>
+<h5 id="1支持丰富的数据类型">1.支持丰富的数据类型</h5>
+<ul>
+<li>
+<p>1.所有基本类型及其切片</p>
+<blockquote>
+<p>切片解析与基本类型一致<br>
+切片类型，会追加，非切片覆盖</p>
+</blockquote>
+</li>
+<li>
+<p>2.map类型</p>
+<blockquote>
+<p>只支持键为string，值为基础类型的 map</p>
+</blockquote>
+</li>
+<li>
+<p>3.函数类型</p>
+</li>
+</ul>
+<p>编写脚本</p>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+)
+
+type Option struct {
+	//特殊类型：基础类型切片、基础类型指针切片、函数、字典
+	StrFlag     string         `short:&quot;s&quot; long:&quot;str&quot; description:&quot;string flag value&quot;`
+	StrSlice    []string       `long:&quot;strSlice&quot; description:&quot;string slice flag value&quot;`
+	PtrStrSlice []*string      `long:&quot;ptrStrSlice&quot; description:&quot;slice of pointer of string flag value&quot;`
+	Call        func(string)   `long:&quot;call&quot; description:&quot;callback&quot;`
+	IntMap      map[string]int `long:&quot;intMap&quot; description:&quot;a map from string to int&quot;`
+}
+
+func main() {
+	var opt Option
+	//函数类型，需要在 parse之前
+	opt.Call = func(s string) {
+		fmt.Println(&quot;is callback:&quot;, s)
+	}
+
+	flags.parse(&amp;opt)
+
+	//基础类型
+	fmt.Println(opt.StrFlag)
+	//基础类型切片
+	fmt.Println(opt.StrSlice)
+	//基础类型指针切片
+	for i := 0; i &lt; len(opt.PtrStrSlice); i++ {
+		//指针切片，所以追加的是指针。*指针获取具体值
+		fmt.Printf(&quot;\t%d: %v\n&quot;, i, *opt.PtrStrSlice[i])
+	}
+	//字典
+	fmt.Printf(&quot;int map:%v\n&quot;, opt.IntMap)
+}
+</code></pre>
+<p>执行</p>
+<pre><code>// 基础类型
+go run go_flags.go -s test
+// 基础类型切片
+go run go_flags.go --strSlice test1 --strSlice test2
+// 基础类型指针切片
+go run go_flags.go --StrSlice test1 --StrSlice test2
+// 函数
+go run go_flags.go --call test1 --call test2
+// 字典
+go run go_flags.go --intMap key1:val1 --intMap key2:val2
+</code></pre>
+<h5 id="2常用设置">2.常用设置</h5>
+<blockquote>
+<p>required 命令行选项必填<br>
+default  默认值</p>
+</blockquote>
+<pre><code>type Option struct {
+	StrFlag string `short:&quot;s&quot; required:&quot;true&quot; default:&quot;test&quot;`
+}
+</code></pre>
+<h5 id="3高级特性">3.高级特性</h5>
+<h6 id="1选项分组">1.选项分组</h6>
+<blockquote>
+<p>group</p>
+</blockquote>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/jessevdk/go-flags&quot;
+	&quot;log&quot;
+	&quot;os&quot;
+)
+
+type Option2 struct {
+	Basic GroupBasicOption `description:&quot;basis type&quot; group:&quot;basic&quot;`
+	Slice GroupSliceOption `description:&quot;slice of basis type&quot; group:&quot;slice&quot;`
+}
+
+type GroupBasicOption struct {
+	IntFlag  int  `short:&quot;i&quot; long:&quot;intflag&quot; description:&quot;int flag&quot;`
+	BoolFlag bool `short:&quot;b&quot; long:&quot;boolflag&quot; description:&quot;bool flag&quot;`
+}
+
+type GroupSliceOption struct {
+	IntSlice  []int  `long:&quot;intslice&quot; description:&quot;int slice&quot;`
+	BoolSlice []bool `long:&quot;bool slice&quot; description:&quot;bool slice&quot;`
+}
+
+func main() {
+	var opt Option2
+	p := flags.NewParser(&amp;opt, flags.Default)
+	_, err := p.ParseArgs(os.Args[1:])
+	if err != nil {
+		log.Fatal(&quot;Parser error&quot;, err)
+	}
+	//查找分组
+	basicGroup := p.Command.Group.Find(&quot;basic&quot;)
+	for _, o := range basicGroup.Options() {
+		fmt.Printf(&quot;name:%s value:%v\n&quot;, o.LongNameWithNamespace(), o.Value())
+	}
+
+	sliceGroup := p.Comand.Group.Find(&quot;slice&quot;)
+	for _, o := range sliceGroup.Options() {
+		fmt.Printf(&quot;name:%s value:%v\n&quot;, o.LongNameWithNamespace(), o.Value())
+	}
+}
+</code></pre>
+<h6 id="2子命令">2.子命令</h6>
+<blockquote>
+<p>必须实现go-flags定义的Commander接口：</p>
+</blockquote>
+<pre><code>type Commander interface {
+    Execute(args []string) error
+}
+</code></pre>
+<blockquote>
+<p>command再定义实现接口的命令为子命令</p>
+</blockquote>
+<pre><code>package main
+
+import (
+	&quot;errors&quot;
+	&quot;github.com/jessevdk/go-flags&quot;
+	&quot;fmt&quot;
+	&quot;log&quot;
+	&quot;strconv&quot;
+	&quot;strings&quot;
+)
+
+type MathCommand struct {
+	Op string `long:&quot;op&quot; description:&quot;operate to execute&quot;`
+	Args []string
+	Result int64
+}
+//子命令必须实现go-flags定义的Commander接口：Execute
+func (this *MathCommand) Execute(args []string) error  {
+	//命令解析时，遇到不是以-或--开头的参数，尝试将其解释为子命令名
+	//加、减、乘、除
+	if this.op != &quot;+&quot; &amp;&amp; this.op != &quot;-&quot; &amp;&amp; this.op != &quot;x&quot; &amp;&amp; this.op != &quot;/&quot; {
+		return errors.New(&quot;invalid op&quot;)
+	}
+
+	//子命令后边参数为子命令的参数
+	for _, arg := range args {
+		num, err := strconv.ParseInt(arg, 10, 64)
+		if err != nil {
+			return err
+		}
+
+		this.Result += num
+	}
+	this.Args = args
+	return nil
+}
+
+type Option3 struct {
+	//定义子命令 op
+	Math MathCommand `command:&quot;math&quot;`
+}
+
+func main()  {
+	var opt Option3
+	_, err := flags.Parse(&amp;opt)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf(&quot;the result of %s is %d&quot;, strings.Join(opt.Math.Args, opt.Math.Op), opt.Math.Result)
+}
+</code></pre>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-13jie-xi-ming-ling-xing-xuan-xiang-flag/">
+              <span class="post-title">
+                go学习-13.解析命令行选项-flag&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://wo-wo.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>石强博客</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

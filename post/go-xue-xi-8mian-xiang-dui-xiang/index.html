@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>go学习-8.面向对象 | 石强博客</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="go学习-8.面向对象 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="go学习-8.面向对象"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-8mian-xiang-dui-xiang/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="石强博客"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://wo-wo.github.io">石强博客</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://wo-wo.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
+        </span>
+            <h1>go学习-8.面向对象</h1>
+            <span class="meta">
+            	Posted on
+              2021-10-12，17 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>[toc]</p>
+<h2 id="make-与-new-区别">make 与 new 区别</h2>
+<h3 id="问题">问题</h3>
+<p>1.new 与 make 的区别是什么？</p>
+<h3 id="1new">1.new</h3>
+<p>1.new函数做了哪些事</p>
+<blockquote>
+<p>分配内存<br>
+设置零值<br>
+返回指针（重要）</p>
+</blockquote>
+<pre><code>import &quot;fmt&quot;
+
+type Student struct {
+   name string
+   age int
+}
+
+func main() {
+    // new 一个内建类型
+    num := new(int)
+    fmt.Println(*num) //打印零值：0
+
+    // new 一个自定义类型
+    s := new(Student)
+    s.name = &quot;wangbm&quot;
+}
+</code></pre>
+<h3 id="2make">2.make</h3>
+<blockquote>
+<p>1.内建函数 make 用来为 slice，map 或 chan 类型（注意：也只能用在这三种类型上）分配内存和初始化一个对象<br>
+2.make 返回类型的本身而不是指针，而返回值也依赖于具体传入的类型，因为这三种类型就是引用类型，所以就没有必要返回他们的指针了</p>
+</blockquote>
+<pre><code>//切片
+a := make([]int, 2, 10)
+
+// 字典
+b := make(map[string]int)
+
+// 通道
+c := make(chan int, 10)
+</code></pre>
+<h3 id="3总结">3.总结</h3>
+<p>1.new：为所有的类型分配内存，并初始化为零值，返回指针。</p>
+<blockquote>
+<p>new 函数并不常用，更喜欢使用短语句声明</p>
+</blockquote>
+<pre><code>a := new(int)
+*a = 1
+// 等价于
+a := 1
+</code></pre>
+<p>2.make：只能为 slice，map，chan 分配内存，并初始化，返回的是类型。</p>
+<blockquote>
+<p>make地位无可替代。在使用slice、map以及channel的时候，必须要使用make进行初始化，然后才可以对他们进行操作</p>
+</blockquote>
+<h2 id="1结构体与继承">1.结构体与继承</h2>
+<h3 id="问题-2">问题</h3>
+<p>1.go怎么实现继承？<br>
+2.结构体怎么定义方法？</p>
+<h3 id="答案">答案</h3>
+<p>1.组合：结构体嵌入<br>
+2.组合函数</p>
+<h3 id="1结构体">1.结构体</h3>
+<p>结构体：将多个简单类型的变量组合在一起的聚合数据类型。</p>
+<ul>
+<li>1.定义结构体</li>
+</ul>
+<pre><code># 声明
+type 结构体名 struct {
+    属性名   属性类型
+    属性名   属性类型
+    ...
+}
+
+type Profile struct {
+    name   string
+    age    int
+    gender string
+    mother *Profile // 指针
+    father *Profile // 指针
+}
+</code></pre>
+<ul>
+<li>2.定义方法<br>
+无法在结构体内定义方法，以使用组合函数的方式来定义结构体方法</li>
+</ul>
+<pre><code># 定义方法
+# 改变实例的属性，必须使用指针做为方法的接收者。person *Profile
+func (person Profile) fn() {
+    fmt.Printf(&quot;名字：%s\n&quot;, person.name)
+    fmt.Printf(&quot;年龄：%d\n&quot;, person.age)
+    fmt.Printf(&quot;性别：%s\n&quot;, person.gender)
+}
+# FmtProfile 是方法名，而(person Profile) ：表示将 FmtProfile 方法与 Profile 的实例绑定。把 Profile 称为方法的接收者
+</code></pre>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+// 声明一个 Profile 的结构体
+type Profile struct {
+    name   string
+    age    int
+    gender string
+    mother *Profile // 指针
+    father *Profile // 指针
+}
+
+// 重点在于这个星号: *
+func (person *Profile) increase_age() {
+    person.age += 1
+}
+
+func main() {
+    myself := Profile{name: &quot;小明&quot;, age: 24, gender: &quot;male&quot;}
+    fmt.Printf(&quot;当前年龄：%d\n&quot;, myself.age)
+    myself.increase_age()
+    fmt.Printf(&quot;当前年龄：%d&quot;, myself.age)
+}
+</code></pre>
+<h3 id="2继承">2.继承</h3>
+<p>Go 语言本身并不支持继承。使用组合的方法，实现类似继承的效果。<br>
+把一个结构体嵌入到另一个结构体的方法，称之为组合。</p>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+type company struct {
+    companyName string
+    companyAddr string
+}
+
+type staff struct {
+    name string
+    age int
+    gender string
+    position string
+    company
+}
+
+func main()  {
+    myCom := company{
+        companyName: &quot;Tencent&quot;,
+        companyAddr: &quot;深圳市南山区&quot;,
+    }
+    staffInfo := staff{
+        name:     &quot;小明&quot;,
+        age:      28,
+        gender:   &quot;男&quot;,
+        position: &quot;云计算开发工程师&quot;,
+        company: myCom,
+    }
+
+    fmt.Printf(&quot;%s 在 %s 工作\n&quot;, staffInfo.name, staffInfo.companyName)
+    fmt.Printf(&quot;%s 在 %s 工作\n&quot;, staffInfo.name, staffInfo.company.companyName)
+}
+</code></pre>
+<h2 id="2接口与多态">2.接口与多态</h2>
+<h3 id="问题-3">问题</h3>
+<p>1.go怎么实现多态？</p>
+<h3 id="答案-2">答案</h3>
+<p>1.接口</p>
+<h3 id="1接口">1.接口</h3>
+<p>面向对象：接口定义一个对象的行为<br>
+go：接口就是方法签名（Method Signature）的集合</p>
+<pre><code>type Phone interface {
+    call()
+}
+</code></pre>
+<h3 id="2多态">2.多态</h3>
+<p>在 Go 语言中，是通过接口来实现的多态</p>
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;strconv&quot;
+)
+
+// 定义一个商品（Good）接口
+type Good interface {
+    settleAccount() int
+    orderInfo() string
+}
+
+//定义两个结构体，分别是手机 Phone 和赠品 FreeGift
+type Phone struct {
+    name string
+    quantity int
+    price int
+}
+
+//分别实现 Good 接口的两个方法
+func (phone Phone) settleAccount() int {
+    return phone.quantity * phone.price
+}
+func (phone Phone) orderInfo() string{
+    return &quot;您要购买&quot; + strconv.Itoa(phone.quantity)+ &quot;个&quot; +
+        phone.name + &quot;计：&quot; + strconv.Itoa(phone.settleAccount()) + &quot;元&quot;
+}
+
+type FreeGift struct {
+    name string
+    quantity int
+    price int
+}
+
+func (gift FreeGift) settleAccount() int {
+    return 0
+}
+func (gift FreeGift) orderInfo() string{
+    return &quot;您要购买&quot; + strconv.Itoa(gift.quantity)+ &quot;个&quot; +
+        gift.name + &quot;计：&quot; + strconv.Itoa(gift.settleAccount()) + &quot;元&quot;
+}
+
+//定义一个方法来计算购物车里的订单金额
+func calculateAllPrice(goods []Good) int {
+    var allPrice int
+    for _,good := range goods{
+        fmt.Println(good.orderInfo())
+        allPrice += good.settleAccount()
+    }
+    return allPrice
+}
+
+func main()  {
+    //实例化两件商品 手机和耳机
+    iPhone := Phone{
+        name:     &quot;iPhone&quot;,
+        quantity: 1,
+        price:    8000,
+    }
+    earphones := FreeGift{
+        name:     &quot;耳机&quot;,
+        quantity: 1,
+        price:    200,
+    }
+
+    //定义一个购物车（也就是类型为 Good的切片）
+    goods := []Good{iPhone, earphones}
+    allPrice := calculateAllPrice(goods)
+    fmt.Printf(&quot;该订单总共需要支付 %d 元&quot;, allPrice)
+}
+</code></pre>
+<h2 id="3结构体的tag">3.结构体的tag</h2>
+<h3 id="问题-4">问题</h3>
+<p>1.结构体tag怎么定义？<br>
+2.结构体tag怎么获取？</p>
+<h3 id="答案-3">答案</h3>
+<p>1.引号包含，由一对或几对的键值对组成，通过空格来分割键值<br>
+2.分3步获取：字段、标签、键值对</p>
+<ul>
+<li>1.定义</li>
+</ul>
+<pre><code># Tag 由反引号包含，由一对或几对的键值对组成，通过空格来分割键值
+`key01:&quot;value01&quot; key02:&quot;value02&quot; key03:&quot;value03&quot;`
+
+type Person struct {
+    Name   `label:&quot;Name is: &quot;`
+    Age    `label:&quot;Age is: &quot;`
+    Gender `label:&quot;Gender is: &quot; default:&quot;unknown&quot;`
+}
+</code></pre>
+<ul>
+<li>2.获取tag</li>
+</ul>
+<p>获取tag分成3步</p>
+<blockquote>
+<p>1.获取字段 field<br>
+2.获取标签 tag<br>
+3.获取键值对 key:value</p>
+</blockquote>
+<pre><code>// 三种获取 field
+field := reflect.TypeOf(obj).FieldByName(&quot;Name&quot;)
+field := reflect.ValueOf(obj).Type().Field(i)  // i 表示第几个字段
+field := reflect.ValueOf(&amp;obj).Elem().Type().Field(i)  // i 表示第几个字段
+
+// 获取 Tag
+tag := field.Tag
+
+// 获取键值对。Get 只是对 Lookup 函数的简单封装，当没有获取到对应 tag 的内容，会返回空字符串
+labelValue := tag.Get(&quot;label&quot;)
+labelValue,ok := tag.Lookup(&quot;label&quot;)
+</code></pre>
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+)
+
+type Person struct {
+    Name        string `label:&quot;Name is: &quot;`
+    Age         int    `label:&quot;Age is: &quot;`
+    Gender      string `label:&quot;Gender is: &quot; default:&quot;unknown&quot;`
+}
+
+func Print(obj interface{}) error {
+    // 取 Value
+    v := reflect.ValueOf(obj)
+
+    // 解析字段
+    for i := 0; i &lt; v.NumField(); i++ {
+
+        // 取tag
+        field := v.Type().Field(i)
+        tag := field.Tag
+
+        // 解析label 和 default
+        label := tag.Get(&quot;label&quot;)
+        defaultValue := tag.Get(&quot;default&quot;)
+
+        value := fmt.Sprintf(&quot;%v&quot;, v.Field(i))
+        if value == &quot;&quot; {
+            // 如果没有指定值，则用默认值替代
+            value = defaultValue
+        }
+
+        fmt.Println(label + value)
+    }
+
+    return nil
+}
+
+func main()  {
+    person := Person{
+        Name:        &quot;MING&quot;,
+        Age:         29,
+    }
+
+    Print(person)
+}
+
+</code></pre>
+<h2 id="4类型断言">4.类型断言</h2>
+<h3 id="问题-5">问题</h3>
+<p>1.类型断言有几种方式？</p>
+<ul>
+<li>1.t, ok:= i.(T)</li>
+</ul>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func main() {
+    var i interface{} = 10
+    t1, ok := i.(int)
+    fmt.Printf(&quot;%d-%t\n&quot;, t1, ok)
+
+    fmt.Println(&quot;=====分隔线1=====&quot;)
+
+    t2, ok := i.(string)
+    fmt.Printf(&quot;%s-%t\n&quot;, t2, ok)
+
+    fmt.Println(&quot;=====分隔线2=====&quot;)
+
+    var k interface{} // nil
+    t3, ok := k.(interface{})
+    fmt.Println(t3, &quot;-&quot;, ok)
+
+    fmt.Println(&quot;=====分隔线3=====&quot;)
+    k = 10
+    t4, ok := k.(interface{})
+    fmt.Printf(&quot;%d-%t\n&quot;, t4, ok)
+
+    t5, ok := k.(int)
+    fmt.Printf(&quot;%d-%t\n&quot;, t5, ok)
+}
+</code></pre>
+<ul>
+<li>2.Type Switch</li>
+</ul>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func findType(i interface{}) {
+    switch x := i.(type) {
+    case int:
+        fmt.Println(x, &quot;is int&quot;)
+    case string:
+        fmt.Println(x, &quot;is string&quot;)
+    case nil:
+        fmt.Println(x, &quot;is nil&quot;)
+    default:
+        fmt.Println(x, &quot;not type matched&quot;)
+    }
+}
+
+func main() {
+    findType(10)      // int
+    findType(&quot;hello&quot;) // string
+
+    var k interface{} // nil
+    findType(k)
+
+    findType(10.23) //float64
+}
+</code></pre>
+<h2 id="5空接口">5.空接口</h2>
+<p>没有定义任何字段、方法的接口</p>
+<h3 id="问题-6">问题</h3>
+<p>1.空接口承载数组或切片后，该对象是否还可以再进行切片？</p>
+<ul>
+<li>1.使用</li>
+</ul>
+<p>1.作为类型声明一个实例，而这个实例可以承载任意类型的值</p>
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+)
+
+func main()  {
+    // 声明一个空接口实例
+    var i interface{}
+
+    // 存 int 没有问题
+    i = 1
+    fmt.Println(i)
+
+    // 存字符串也没有问题
+    i = &quot;hello&quot;
+    fmt.Println(i)
+
+    // 存布尔值也没有问题
+    i = false
+    fmt.Println(i)
+}
+</code></pre>
+<p>2.函数可以接收任意类型的值 ，也可以使用空接口</p>
+<blockquote>
+<p>亦可接收任意个任意类型的值 ...interface{}</p>
+</blockquote>
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+)
+
+func myfunc(iface ...interface{}){
+    fmt.Println(iface)
+}
+
+func main()  {
+    a := 10
+    b := &quot;hello&quot;
+    c := true
+
+    myfunc(a, b, c)
+}
+</code></pre>
+<ul>
+<li>2.注意</li>
+</ul>
+<p>1.空接口可以承载任意值，但不代表任意类型就可以承接空接口类型的值</p>
+<pre><code>package main
+
+func main() {
+    // 声明a变量, 类型int, 初始值为1
+    var a int = 1
+
+    // 声明i变量, 类型为interface{}, 初始值为a, 此时i的值变为1
+    var i interface{} = a
+
+    // 声明b变量, 尝试赋值i
+    var b int = i
+}
+</code></pre>
+<p>2.当空接口承载数组或切片后，该对象无法再进行切片</p>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+func main() {
+    sli := []int{2, 3, 5, 7, 11, 13}
+
+    var i interface{}
+    i = sli
+
+    g := i[1:3]
+    fmt.Println(g)
+}
+</code></pre>
+<p>3.当你使用空接口来接收任意类型的参数时，它的静态类型是 interface{}，但动态类型（是 int，string 还是其他类型）我们并不知道，因此需要使用类型断言</p>
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+)
+
+func myfunc(i interface{})  {
+
+    switch i.(type) {
+    case int:
+        fmt.Println(&quot;参数的类型是 int&quot;)
+    case string:
+        fmt.Println(&quot;参数的类型是 string&quot;)
+    }
+}
+
+func main() {
+    a := 10
+    b := &quot;hello&quot;
+    myfunc(a)
+    myfunc(b)
+}
+</code></pre>
+<h2 id="6接口限制">6.接口限制</h2>
+<h3 id="1方法调用限制">1.方法调用限制</h3>
+<blockquote>
+<p>1.显示声明接口类型，受到接口类型约束<br>
+2.不显示声明接口类型，不会受到接口类型约束</p>
+</blockquote>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+type Phone interface {
+    call()
+}
+
+type iPhone struct {
+    name string
+}
+
+func (phone iPhone)call()  {
+    fmt.Println(&quot;Hello, iPhone.&quot;)
+}
+
+func (phone iPhone)send_wechat()  {
+    fmt.Println(&quot;Hello, Wechat.&quot;)
+}
+
+func main() {
+    //显示声明接口类型
+    var phone Phone
+    phone = iPhone{name:&quot;ming's iphone&quot;}
+    phone.call()
+    phone.send_wechat()
+    
+    //不显示声明
+    phone2 := iPhone{name:&quot;ming's iphone&quot;}
+    phone2.call()
+    phone2.send_wechat()
+}
+</code></pre>
+<h3 id="2隐式转换">2.隐式转换</h3>
+<p>1.函数隐式转换</p>
+<blockquote>
+<p>Go 语言中的函数调用都是值(只要传递的不是指针)传递的，变量会在方法调用前进行类型转换</p>
+</blockquote>
+<pre><code>import (
+    &quot;fmt&quot;
+)
+
+func printType(i interface{})  {
+
+    switch i.(type) {
+    case int:
+        fmt.Println(&quot;参数的类型是 int&quot;)
+    case string:
+        fmt.Println(&quot;参数的类型是 string&quot;)
+    }
+}
+
+func main() {
+    a := 10
+    printType(a)
+}
+
+#================
+package main
+
+import &quot;fmt&quot;
+
+
+func main() {
+    a := 10
+
+    //显示转换
+    //b := interface{}(a)
+    switch b.(type) {
+    case int:
+        fmt.Println(&quot;参数的类型是 int&quot;)
+    case string:
+        fmt.Println(&quot;参数的类型是 string&quot;)
+    }
+}
+</code></pre>
+<p>2.类型断言中的隐式转换</p>
+<blockquote>
+<p>类型断言完成后，会返回一个静态类型为你断言的类型的对象。即Go 实际上又会默认为我们进行了一次隐式的类型转换</p>
+</blockquote>
+<pre><code>package main
+
+import &quot;fmt&quot;
+
+
+func main() {
+    a := 10
+
+    //显示转换
+    //b := interface{}(a)
+    switch c := b.(type) {
+    case int:
+        c.(int) //报错non-interface type
+        fmt.Println(&quot;参数的类型是 int&quot;)
+    case string:
+        fmt.Println(&quot;参数的类型是 string&quot;)
+    }
+}
+</code></pre>
+<h2 id="7反射">7.反射</h2>
+<h3 id="问题-7">问题</h3>
+<p>1.如何通过反射修改值？</p>
+<p>1.反射的三大定律</p>
+<blockquote>
+<p>1.反射可以将接口类型变量 转换为“反射类型对象”；<br>
+2.反射可以将 “反射类型对象”转换为 接口类型变量；<br>
+3.如果要修改 “反射类型对象” 其类型必须是 可写的；</p>
+</blockquote>
+<h3 id="1第一定律接口类型变量-反射对象">1.第一定律：接口类型变量 -&gt; 反射对象</h3>
+<blockquote>
+<p>reflect.TypeOf(i) ：获得接口值的类型<br>
+reflect.ValueOf(i)：获得接口值的值</p>
+</blockquote>
+<p>这两个方法返回的对象，我们称之为反射对象：Type object 和 Value object。</p>
+<pre><code>package main
+
+import (
+&quot;fmt&quot;
+&quot;reflect&quot;
+)
+
+func main() {
+    var age interface{} = 25
+
+    fmt.Printf(&quot;原始接口变量的类型为 %T，值为 %v \n&quot;, age, age)
+
+    t := reflect.TypeOf(age)
+    v := reflect.ValueOf(age)
+
+    // 从接口变量到反射对象
+    fmt.Printf(&quot;从接口变量到反射对象：Type对象的类型为 %T \n&quot;, t)
+    fmt.Printf(&quot;从接口变量到反射对象：Value对象的类型为 %T \n&quot;, v)
+}
+</code></pre>
+<p>为什么第一定律，说是接口类型的变量？</p>
+<blockquote>
+<p>1.由于 TypeOf 和 ValueOf 两个函数接收的是 interface{} 空接口类型<br>
+2.而 Go 语言函数都是值传递，因此Go语言会将我们的类型隐式地转换成接口类型。</p>
+</blockquote>
+<pre><code>// TypeOf returns the reflection Type of the value in the interface{}.TypeOf returns nil.
+func TypeOf(i interface{}) Type
+
+// ValueOf returns a new Value initialized to the concrete value stored in the interface i. ValueOf(nil) returns the zero Value.
+func ValueOf(i interface{}) Value
+</code></pre>
+<h3 id="2反射对象-接口变量">2.反射对象 -&gt; 接口变量</h3>
+<pre><code>package main
+
+import (
+&quot;fmt&quot;
+&quot;reflect&quot;
+)
+
+func main() {
+    var age interface{} = 25
+
+    fmt.Printf(&quot;原始接口变量的类型为 %T，值为 %v \n&quot;, age, age)
+
+    t := reflect.TypeOf(age)
+    v := reflect.ValueOf(age)
+
+    // 从接口变量到反射对象
+    fmt.Printf(&quot;从接口变量到反射对象：Type对象的类型为 %T \n&quot;, t)
+    fmt.Printf(&quot;从接口变量到反射对象：Value对象的类型为 %T \n&quot;, v)
+
+    // 从反射对象到接口变量
+    //注：转换后的对象，静态类型为 interface{} 
+    i := v.Interface()     
+    //转成最初的原始类型，需要再类型断言转换一下
+    //i := v.Interface().(int)
+    fmt.Printf(&quot;从反射对象到接口变量：新对象的类型为 %T 值为 %v \n&quot;, i, i)
+}
+</code></pre>
+<h3 id="3第三定律可设置性">3.第三定律：可设置性</h3>
+<p>Go 语言里的函数都是值传递。传递的不是变量的指针，在函数内部对变量的修改是不会影响到原始的变量</p>
+<blockquote>
+<p>1.不是接收变量指针创建的反射对象，是不具备『可写性』的<br>
+2.是否具备『可写性』，可使用 CanSet() 来获取得知<br>
+3.对不具备『可写性』的对象进行修改，是没有意义的，也认为是不合法的，因此会报错。</p>
+</blockquote>
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;reflect&quot;
+)
+
+func main() {
+    var name string = &quot;Go编程时光&quot;
+    v1 := reflect.ValueOf(&amp;name)//指针
+    fmt.Println(&quot;v1 可写性为:&quot;, v1.CanSet())
+
+    v2 := v1.Elem() //Elem()函数返回指针指向的数据
+    fmt.Println(&quot;v2 可写性为:&quot;, v2.CanSet())
+}
+
+#==========例：通过反射修改
+package main
+
+import (
+    &quot;fmt&quot;
+    &quot;reflect&quot;
+)
+
+func main() {
+    var name string = &quot;Go编程时光&quot;
+    fmt.Println(&quot;真实世界里 name 的原始值为：&quot;, name)
+
+    v1 := reflect.ValueOf(&amp;name)
+    v2 := v1.Elem()
+
+    v2.SetString(&quot;Python编程时光&quot;)
+    fmt.Println(&quot;通过反射对象进行更新后，真实世界里 name 变为：&quot;, name)
+}
+</code></pre>
+<h3 id="4反射函数">4.反射函数</h3>
+<p>1.Kind()</p>
+<blockquote>
+<p>Type 对象 和 Value 对象都可以通过 Kind() 方法返回对应的接口变量的基础类型</p>
+</blockquote>
+<pre><code>kage main
+
+import (
+    &quot;fmt&quot;
+    &quot;reflect&quot;
+)
+
+type Profile struct {
+    name string
+    age int
+    gender string
+}
+
+func main() {
+    m := Profile{}
+
+    t := reflect.TypeOf(m)
+    fmt.Println(&quot;Type: &quot;,t)
+    fmt.Println(&quot;Kind: &quot;,t.Kind())
+}
+</code></pre>
+<h3 id="5总结">5.总结</h3>
+<p>1.有 reflect 的代码一般都较难理解，使用时请注意适当。<br>
+2.Golang 的反射很慢，这个和它的 API 设计有关<br>
+3.反射是一个高级知识点，内容很多，不容易掌握，应该小心谨慎的使用它<br>
+4.不到不得不用的地步，能避免使用反射就不用。</p>
+<h3 id="8json处理">8.json处理</h3>
+<blockquote>
+<p>使用 json 包处理：将 json 转换成 结构体，或者将结构体转换成 json</p>
+</blockquote>
+<h4 id="1结构体转-json">1.结构体转 json</h4>
+<pre><code>type Test struct {
+	Id        int    `json:id`
+	FirstName string `json:first_name`
+}
+
+func main() {
+	a := Test{
+		Id:        1,
+		FirstName: &quot;tom&quot;,
+	}
+
+	//将结构体抓换成 json
+	j, err := json.Marshal(a)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(j)
+}
+</code></pre>
+<h4 id="2json转结构体">2.json转结构体</h4>
+<h4 id="3获取-map类型的接口">3.获取 map类型的接口</h4>
+<pre><code>make(map[string]interface{})
+</code></pre>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-7jie-kou-yu-fan-she/">
+              <span class="post-title">
+                go学习-7.接口与反射&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://wo-wo.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>石强博客</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

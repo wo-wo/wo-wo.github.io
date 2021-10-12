@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>go学习-9.读写数据 | 石强博客</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="go学习-9.读写数据 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="go学习-9.读写数据"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-9du-xie-shu-ju/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="石强博客"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://wo-wo.github.io">石强博客</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://wo-wo.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
+        </span>
+            <h1>go学习-9.读写数据</h1>
+            <span class="meta">
+            	Posted on
+              2021-10-12，6 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>[toc]</p>
+<h3 id="1用户输入">1.用户输入</h3>
+<p>1.读取用户的键盘（控制台）输入 os.Stdin ？</p>
+<blockquote>
+<p>1.最简单：fmt 包提供的 Scan 和 Sscan 开头的函数<br>
+2.bufio 包提供的缓冲读取（buffered reader）</p>
+</blockquote>
+<pre><code># 1.fmt
+// 从控制台读取输入:
+package main
+import &quot;fmt&quot;
+
+var (
+   firstName, lastName, s string
+   i int
+   f float32
+   input = &quot;56.12 / 5212 / Go&quot;
+   format = &quot;%f / %d / %s&quot;
+)
+
+func main() {
+   fmt.Println(&quot;Please enter your full name: &quot;)
+   fmt.Scanln(&amp;firstName, &amp;lastName)
+   // fmt.Scanf(&quot;%s %s&quot;, &amp;firstName, &amp;lastName)
+   fmt.Printf(&quot;Hi %s %s!\n&quot;, firstName, lastName) // Hi Chris Naegels
+   fmt.Sscanf(input, format, &amp;f, &amp;i, &amp;s)
+   fmt.Println(&quot;From the string we read: &quot;, f, i, s)
+    // 输出结果: From the string we read: 56.12 5212 Go
+}
+</code></pre>
+<pre><code>package main
+import (
+    &quot;fmt&quot;
+    &quot;bufio&quot;
+    &quot;os&quot;
+)
+
+var inputReader *bufio.Reader
+var input string
+var err error
+
+func main() {
+    inputReader = bufio.NewReader(os.Stdin)
+    fmt.Println(&quot;Please enter some input: &quot;)
+    input, err = inputReader.ReadString('\n')
+    if err == nil {
+        fmt.Printf(&quot;The input was: %s\n&quot;, input)
+    }
+}
+</code></pre>
+<h3 id="2命令行参数">2.命令行参数</h3>
+<p>1.os 包</p>
+<blockquote>
+<p>string 类型的切片变量 os.Args</p>
+</blockquote>
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;os&quot;
+    &quot;strings&quot;
+)
+
+func main() {
+    who := &quot;Alice &quot;
+    if len(os.Args) &gt; 1 {
+        who += strings.Join(os.Args[1:], &quot; &quot;)
+    }
+    fmt.Println(&quot;Good Morning&quot;, who)
+}
+</code></pre>
+<p>2.flag包</p>
+<pre><code>package main
+
+import (
+    &quot;flag&quot; // command line option parser
+    &quot;os&quot;
+)
+
+//定义了一个默认值是 false 的 flag，类型 bool。当flag中参数出现 n 时，flag 为 true
+var NewLine = flag.Bool(&quot;n&quot;, false, &quot;print newline&quot;) 
+
+const (
+    Space   = &quot; &quot;
+    Newline = &quot;\n&quot;
+)
+
+func main() {
+    //打印 flag 的使用帮助信息
+    flag.PrintDefaults()
+    //扫描参数列表（或者常量列表）并设置 flag
+    flag.Parse() 
+    var s string = &quot;&quot;
+    //flag.Narg() 返回参数的数量
+    for i := 0; i &lt; flag.NArg(); i++ {
+        if i &gt; 0 {
+            s += &quot; &quot;
+            if *NewLine { // -n is parsed, flag becomes true
+                s += Newline
+            }
+        }
+        //第 i 个参数。Parse() 之后 flag.Arg(i) 全部可用
+        s += flag.Arg(i)
+    }
+    os.Stdout.WriteString(s)
+}
+</code></pre>
+<h3 id="2文件读取">2.文件读取</h3>
+<p>1.操作文件</p>
+<blockquote>
+<p>1.文件句柄：os.File 类型的指针。<br>
+2.os.Stdin 和 os.Stdout，类型都是 *os.File</p>
+</blockquote>
+<p>2.读取数据方式</p>
+<blockquote>
+<p>1.bufio：缓存区。</p>
+</blockquote>
+<pre><code>inputFile, inputError := os.Open(&quot;input.dat&quot;)
+
+# 1.bufio 缓存区
+inputReader := bufio.NewReader(inputFile)
+# 按行读取
+inputString, readerError := inputReader.ReadString('\n')
+# 带缓冲的读取(不按行划分、或二进制文件)
+buf := make([]byte, 1024)
+n, err := inputReader.Read(buf)
+
+# 2.读取到一个字符串 io/ioutil
+buf, err := ioutil.ReadFile(inputFile)
+fmt.Printf(&quot;%s\n&quot;, string(buf))
+err = ioutil.WriteFile(outputFile, buf, 0644)
+
+# 3.按列读取 fmt 包以 FScan 开头函数
+var v1, v2, v3 string
+_, err := fmt.Fscanln(file, &amp;v1, &amp;v2, &amp;v3)
+
+# 4.读取压缩包 compress包
+fz, err := gzip.NewReader(inputFile)
+if err != nil {
+    r = bufio.NewReader(inputFile)
+} else {
+    r = bufio.NewReader(fz)
+}
+for {
+    line, err := r.ReadString('\n')
+    ...
+}
+</code></pre>
+<pre><code># 例
+package main
+import (
+    &quot;bufio&quot;
+    &quot;fmt&quot;
+    &quot;io&quot;
+    &quot;os&quot;
+)
+
+func main() {
+    inputFile, inputError := os.Open(&quot;input.dat&quot;)
+    if inputError != nil {
+        fmt.Printf(&quot;An error occurred on opening the inputfile\n&quot; +
+            &quot;Does the file exist?\n&quot; +
+            &quot;Have you got acces to it?\n&quot;)
+        return // exit the function on error
+    }
+    defer inputFile.Close()
+    //读到缓存区
+    inputReader := bufio.NewReader(inputFile)
+    for {
+        //ReadString('\n') 或 ReadBytes('\n') 将文件的内容逐行（行结束符 '\n'）读取。
+        //虽然不同操作系统，换行符不同，但是不需要关心，直接使用 \n 就可以了。ReadLine()实现通用功能
+        inputString, readerError := inputReader.ReadString('\n')
+    fmt.Printf(&quot;The input was: %s&quot;, inputString)
+        if readerError == io.EOF {
+            return
+        }      
+    }
+}
+</code></pre>
+<p>3.写文件 bufio</p>
+<pre><code>package main
+
+import (
+    &quot;os&quot;
+    &quot;bufio&quot;
+    &quot;fmt&quot;
+)
+
+func main () {
+    outputFile, outputError := os.OpenFile(&quot;output.dat&quot;, os.O_WRONLY|os.O_CREATE, 0666)
+    if outputError != nil {
+        fmt.Printf(&quot;An error occurred with file opening or creation\n&quot;)
+        return  
+    }
+    defer outputFile.Close()
+
+    outputWriter := bufio.NewWriter(outputFile)
+    outputString := &quot;hello world!\n&quot;
+
+    for i:=0; i&lt;10; i++ {
+        outputWriter.WriteString(outputString)
+    }
+    outputWriter.Flush()
+}
+</code></pre>
+<p>4.文件拷贝 io 包 Copy()</p>
+<pre><code># 读取源文件
+src, err := os.Open(srcName)
+defer src.Close()
+# 读取目标文件
+dst, err := os.OpenFile(dstName, os.O_WRONLY|os.O_CREATE, 0644)
+defer dst.Close()
+# 拷贝
+io.Copy(dst, src)
+</code></pre>
+<h3 id="3数据格式化">3.数据格式化</h3>
+<h4 id="1json">1.json</h4>
+<blockquote>
+<p>json.Marshal() 格式化数据 func Marshal(v interface{}) ([]byte, error)<br>
+json 包提供 Decoder 和 Encoder 类型来支持常用 JSON 数据流读写</p>
+</blockquote>
+<pre><code>package main
+
+import (
+    &quot;encoding/json&quot;
+    &quot;fmt&quot;
+    &quot;log&quot;
+    &quot;os&quot;
+)
+
+type Address struct {
+    Type    string
+    City    string
+    Country string
+}
+
+type VCard struct {
+    FirstName string
+    LastName  string
+    Addresses []*Address
+    Remark    string
+}
+
+func main() {
+    pa := &amp;Address{&quot;private&quot;, &quot;Aartselaar&quot;, &quot;Belgium&quot;}
+    wa := &amp;Address{&quot;work&quot;, &quot;Boom&quot;, &quot;Belgium&quot;}
+    vc := VCard{&quot;Jan&quot;, &quot;Kersschot&quot;, []*Address{pa, wa}, &quot;none&quot;}
+    // fmt.Printf(&quot;%v: \n&quot;, vc) // {Jan Kersschot [0x126d2b80 0x126d2be0] none}:
+    // 格式化成json
+    js, _ := json.Marshal(vc)
+    fmt.Printf(&quot;JSON format: %s&quot;, js)
+    // using an encoder:
+    file, _ := os.OpenFile(&quot;vcard.json&quot;, os.O_CREATE|os.O_WRONLY, 0666)
+    defer file.Close()
+    //ewDecoder 和 NewEncoder 函数分别封装了 io.Reader 和 io.Writer 接口。
+    enc := json.NewEncoder(file)
+    //json数据流读写
+    err := enc.Encode(vc)
+    if err != nil {
+        log.Println(&quot;Error in encoding json&quot;)
+    }
+}
+</code></pre>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-8mian-xiang-dui-xiang/">
+              <span class="post-title">
+                go学习-8.面向对象&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://wo-wo.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>石强博客</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

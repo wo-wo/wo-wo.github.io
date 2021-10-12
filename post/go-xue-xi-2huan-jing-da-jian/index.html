@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>go学习-2.环境搭建 | 石强博客</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="go学习-2.环境搭建 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="go学习-2.环境搭建"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-2huan-jing-da-jian/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="石强博客"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://wo-wo.github.io">石强博客</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://wo-wo.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
+        </span>
+            <h1>go学习-2.环境搭建</h1>
+            <span class="meta">
+            	Posted on
+              2021-10-12，6 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>[toc]</p>
+<h3 id="1环境变量">1.环境变量</h3>
+<h4 id="1gorootgo安装目录">1.$GOROOT：GO安装目录</h4>
+<blockquote>
+<p>1.默认 <code>$HOME/go</code>。Windows，<code>c:/go</code>，mac，/usr/local/go<br>
+注：brew安装后目录：/usr/local/Cellar/go（brew安装不一定是最新的）</p>
+</blockquote>
+<h4 id="2gopath工作区">2.$GOPATH：工作区</h4>
+<blockquote>
+<p>1.默认 = <code>$GOROOT</code>。从 Go 1.1开始，必须修改为其它目录，例：<code>$HOME/go_www</code><br>
+2.工作区需要特定目录：src：项目源文件目录，pkg：使用的包或库，bin：编译好的可执行文件目录</p>
+</blockquote>
+<pre><code># 配置工作区
+# 1.配置环境变量
+vi ~/.bash_profile
+******
+export GOPATH=$HOME/go_www
+export PATH=$PATH:$GOPATH/bin
+******
+
+source ~/.bash_profile
+
+# 注：电脑重启后，zsh加载的是 ~/.zshrc，而不是 ~/.bash_profile文件，想要环境变量生效，编辑 ~/.zshrc
+vi ~/.zshrc
+******
+source ~/.bash_profile
+******
+
+# 3.创建工作区特定目录
+# go get会把下载到的资源按 src/pkg/bin 结构正确安装对应目录
+mkdir -p $GOPATH/src $GOPATH/pkg $GOPATH/bin
+</code></pre>
+<h4 id="3查看-go-env">3.查看 go env</h4>
+<pre><code># 配置go全局环境变量
+# 注：修改bash_profile添加环境变量，并不能生效
+# 国内代理（七牛云）
+go env -w GOPROXY=https://goproxy.cn,direct
+# go模式
+go env -w GO111MODULE=auto
+</code></pre>
+<h3 id="2安装go">2.安装go</h3>
+<h4 id="1mac">1.mac</h4>
+<pre><code># 安装
+brew install go
+# brew安装后目录：/usr/local/Cellar/go。
+# 注：编辑器安装后， GOROOT 默认没有 sdk，需要手动勾选 brew 安装的 sdk
+# 查看版本
+go version
+</code></pre>
+<h3 id="3编辑器">3.编辑器</h3>
+<h4 id="1goland">1.Goland</h4>
+<h5 id="1破解">1.破解</h5>
+<blockquote>
+<p>1.试了网上其它破解方式对最新版基本失效。<br>
+2.运行，选择，evaluate for free，<br>
+3.将 jetbrains-agent-latest(1)(2).zip 拖入界面，自动添加 vm 属性。或者手动编辑自定义 vm 属性： &quot;Help&quot; -&gt; &quot;Edit Custom VM Options...&quot;，路径避免写错：将jar包拖入终端。重启，查看有效期到2089年<br>
+4.汉化：将 resources_cn.jar 放入安装目录的 lib 下(/Applications/GoLand.app/Contents/lib)：finder -&gt; 应用程序 -&gt; Goland -&gt; 显示包内容 -&gt; contents -&gt; lib。重启</p>
+</blockquote>
+<h5 id="2问题jar包引入不正确软件启动不了闪退">2.问题：jar包引入不正确，软件启动不了，闪退</h5>
+<pre><code># 1.查看启动错误日志（应用程序 -&gt; 显示包内容，找到对应脚本）
+/Applications/GoLand.app/Contents/MacOS/goland
+
+# 2.错误信息如下
+2020-09-03 16:09:30.880 goland[1204:15506] allVms required 1.8*,1.8+
+2020-09-03 16:09:30.883 goland[1204:15510] Current Directory: /Users/julive/Applications
+2020-09-03 16:09:30.883 goland[1204:15510] Value of GOLAND_VM_OPTIONS is (null)
+2020-09-03 16:09:30.883 goland[1204:15510] Processing VMOptions file at /Users/julive/Library/Application Support/JetBrains/GoLand2020.2/goland.vmoptions
+2020-09-03 16:09:30.883 goland[1204:15510] Done
+OpenJDK 64-Bit Server VM warning: Option UseConcMarkSweepGC was deprecated in version 9.0 and will likely be removed in a future release.
+Error opening zip file or JAR manifest missing : /Users/文档/2.开发软件/5.go/jetbrains\ 2019\ Crack/jetbrains-agent.jar
+Error occurred during initialization of VM
+
+# 3.找到对应配置文件，并修改错误 jar 引入
+vi /Users/julive/Library/Application\ Support/JetBrains/GoLand2020.2/goland.vmoptions
+</code></pre>
+<h5 id="3简单配置">3.简单配置</h5>
+<blockquote>
+<p>打开设置：cmd + ,</p>
+</blockquote>
+<ul>
+<li>1.GOROOT：默认：$HOME/go；brew下载后地址：/usr/local/Cellar/go</li>
+<li>2.GOPATH：环境变量中配置的GOPATH；默认$HOME/go，v1.1之后必须修改为其它目录</li>
+<li>3.go build：打开一个go文件，右上角&quot;add configuration&quot; -&gt; Templates -&gt; go build，勾选对应的配置地址</li>
+<li>4.goimports：自动格式化插件。工具 -&gt; File Watchers -&gt; + -&gt; goimports</li>
+</ul>
+<p>注：GOPATH，go mod二种模式的配置，参考【go mod】</p>
+<h4 id="2visual-studio-code">2.Visual Studio Code</h4>
+<p><a href="https://www.it610.com/article/1281002992446750720.htm">VSCode常见问题汇总</a></p>
+<h5 id="1安装-brew">1.安装 - brew</h5>
+<pre><code># 安装 VS Code
+brew cask install visual-studio-code
+# 验证 VS Code 是否安装正确
+code .
+</code></pre>
+<h5 id="2安装拓展">2.安装拓展</h5>
+<blockquote>
+<p>默认 VS Code 只自带了少量功能集成</p>
+</blockquote>
+<h6 id="1从-github-上手动下载两个仓库">1.从 github 上手动下载两个仓库</h6>
+<blockquote>
+<p>因为有墙的存在，在线安装的话，很多插件会下载失败。<br>
+注：代理设置成全局 go env -w GOPROXY=https://goproxy.cn,direct</p>
+</blockquote>
+<pre><code># 创建目录 $GOPATH/src/golang.org/x/
+git clone https://github.com/golang/tools.git
+git clone https://github.com/golang/lint.git
+</code></pre>
+<h6 id="2安装">2.安装</h6>
+<ul>
+<li>1.命令安装</li>
+</ul>
+<pre><code># 安装拓展：vscode-go
+code --install-extension ms-vscode.go
+# 
+go get -u github.com/go-delve/delve/cmd/dlv
+#
+go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+</code></pre>
+<ul>
+<li>2.插件安装</li>
+</ul>
+<ul>
+<li>go：go语言插件</li>
+<li>code runner：编译运行 go  程序</li>
+<li>delve：调试工具</li>
+<li></li>
+</ul>
+<h6 id="3问题">3.问题</h6>
+<p><a href="https://www.it610.com/article/1281002992446750720.htm">VSCode常见问题汇总（持续更新中）</a><br>
+1.mac 下 vscode 扩展安装目录<br>
+<code>~/.vscode/extensions</code></p>
+<p>2.command ‘code-runner.run’ not found</p>
+<pre><code># 修改 codeManager.js，注释掉：micromatch(13行；224-235行)
+vi ~/.vscode/extensions/formulahendry.code-runner-0.11.0/out/src/codeManager.js
+</code></pre>
+<p>3.Install All 插件安装 FAILED</p>
+<blockquote>
+<p>使用 vpn 还是失败，使用<a href="https://github.com/goproxy/goproxy.cn/blob/master/README.zh-CN.md">Go 模块代理</a></p>
+</blockquote>
+<pre><code># macOS 或 Linux
+echo &quot;export GO111MODULE=on&quot; &gt;&gt; ~/.profile
+echo &quot;export GOPROXY=https://goproxy.cn&quot; &gt;&gt; ~/.profile
+source ~/.profile
+
+# Windows
+$env:GO111MODULE = &quot;on&quot;
+$env:GOPROXY = &quot;https://goproxy.cn&quot;
+</code></pre>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-1su-cai-tui-jian/">
+              <span class="post-title">
+                go学习-1.素材推荐&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://wo-wo.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>石强博客</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

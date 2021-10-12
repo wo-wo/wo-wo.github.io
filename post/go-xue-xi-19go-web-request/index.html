@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>go学习-19.go web request | 石强博客</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="go学习-19.go web request | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="go学习-19.go web request"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-19go-web-request/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="石强博客"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://wo-wo.github.io">石强博客</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://wo-wo.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
+        </span>
+            <h1>go学习-19.go web request</h1>
+            <span class="meta">
+            	Posted on
+              2021-10-12，7 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>[toc]</p>
+<h3 id="1资料">1.资料</h3>
+<ul>
+<li>《Go Web 编程》</li>
+<li><a href="https://www.yuque.com/bobby-zpcyu/fgg66n/hi6mlb">慕课网-Go开发工程师-课程文档</a></li>
+<li><a href="https://www.kancloud.cn/shuangdeyu/gin_book/949412">Gin 中文文档</a></li>
+<li><a href="https://www.yuque.com/xinliangnote/go-gin-api/ngc3x5">go-gin-api 文档</a></li>
+<li><a href="http://doc.go-admin.cn/zh/">GoAdmin文档</a></li>
+</ul>
+<h3 id="2nethttp包">2.net/http包</h3>
+<blockquote>
+<p>与 http 交互，都是基于基础包 net/http；<br>
+例如：gin 等</p>
+</blockquote>
+<p>问题：</p>
+<ul>
+<li>1.Go Web 编程，看下来，整体感受如何？</li>
+<li>2.go web https服务器，如何搭建？</li>
+<li>3.多路复用器的意义是什么？</li>
+<li>4.处理器函数的原理、意义是什么？</li>
+</ul>
+<p>核心：</p>
+<ul>
+<li>DefaultServeMux 单例</li>
+<li>处理器函数（HandlerFunc）</li>
+<li>ListenAndServer()</li>
+</ul>
+<h4 id="1构建-go-web-服务器">1.构建 go web 服务器</h4>
+<h5 id="1最简单的服务器">1.最简单的服务器</h5>
+<pre><code>import (
+	&quot;net/http&quot;
+)
+
+func main()  {
+	//启动一个http服务器，监听8080端口。默认端口可省
+	//nil：使用默认多路复用器 DefaultServeMux
+	//问题：参数是处理器，为什么默认使用多路复用器？
+	http.ListenAndServe(&quot;:8080&quot;, nil)
+}
+</code></pre>
+<h5 id="2附加配置的服务器">2.附加配置的服务器</h5>
+<p>1.Server结构体</p>
+<pre><code>type Server struct {
+	Addr           string
+	Handler        Handler
+	ReadTimeout    time.Duration
+	WriteTimeout   time.Duration
+	MaxHeaderBytes int
+	# https
+	TLSConfig      *tls.Config
+	TLSNextProto   map[string]func(*Server, *tls.Conn, Handler)
+	
+	ConnState      func(net.Conn, ConnState)
+	ErrorLog       *log.Logger
+	...
+}
+</code></pre>
+<p>2.增加一些配置</p>
+<pre><code>func main()  {
+	server := http.Server{
+		Addr: &quot;127.0.0.1:8080&quot;,
+		Handler: nil,
+	}
+	server.ListenAndServe()
+}
+</code></pre>
+<h5 id="3https-的服务器">3.HTTPS 的服务器</h5>
+<pre><code>func main()  {
+	server := http.Server{
+		Addr: &quot;127.0.0.1:8080&quot;,
+		Handler: nil,
+	}
+	server.ListenAndServeTLS(&quot;cert.pem&quot;, &quot;key.pem&quot;)
+}
+</code></pre>
+<h4 id="2处理请求">2.处理请求</h4>
+<h5 id="1处理器-handler">1.处理器 Handler</h5>
+<blockquote>
+<p>一个处理器就是一个拥有 ServeHTTP 方法，且签名相同（即参数相同）的接口</p>
+</blockquote>
+<pre><code># 注意是 ServeHTTP，不是 ServerHTTP
+ServeHTTP(http.ResponseWriter, *http.Request)
+</code></pre>
+<h5 id="2多路复用器-defaultservemux">2.多路复用器 DefaultServeMux</h5>
+<ul>
+<li>
+<p>不仅是多路复用器，还是一个处理器</p>
+<blockquote>
+<p>DefaultServeMux 是 ServeMux结构 的一个实例，而后者拥有 ServerHTTP 方法；<br>
+即：DefaultServeMux 即是 ServeMux结构 的实例，也是 Handler 结构 的实例；</p>
+</blockquote>
+</li>
+<li>
+<p>多路复用器作用</p>
+</li>
+</ul>
+<blockquote>
+<p>是一个特殊处理器，唯一作用：根据请求的 URL 将请求重定向到不同处理器</p>
+</blockquote>
+<h5 id="3自定义处理器">3.自定义处理器</h5>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;net/http&quot;
+)
+
+type MyHandler struct {}
+
+func (h *MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, &quot;Hello world!&quot;)
+}
+
+func main()  {
+	handler:= MyHandler{}
+	server := http.Server{
+		Addr: &quot;127.0.0.1:8080&quot;,
+		Handler: &amp;handler,
+	}
+	//http://localhost:10000/
+	//http://localhost:10000/aa/bb
+	server.ListenAndServe()
+}
+</code></pre>
+<p>浏览器访问 http://localhost:8080/，就可看到 Hello world 响应</p>
+<p>4.问题：如果此时浏览器输入 http://localhost:8080/anything/all，结果是什么？</p>
+<p>原因：使用自定义处理器，代替了默认 多路复用器；<br>
+多路复用器作用：根据请求的 URL 将请求重定向到不同处理器；<br>
+所以：直接使用自定义处理器处理所有请求，不论访问什么都是 Hello world 响应</p>
+<h5 id="4使用多个处理器">4.使用多个处理器</h5>
+<blockquote>
+<p>1.服务器使用默认的 DefaultServeMux 作为处理器；不在 Server 结构的 Handler 字段中指定处理器<br>
+2.通过 http.Handle 函数将处理器绑定到 DefaultServeMux</p>
+</blockquote>
+<p>注：Handle 函数虽然来源于 http 包，实际上是 ServeMux 结构的方法；http.Handle 等同 DefaultServeMux.Handle</p>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;net/http&quot;
+)
+
+type HelloHandler struct {}
+
+func (h *HelloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, &quot;Hello!&quot;)
+}
+
+type WorldHandler struct {}
+
+func (h *WorldHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, &quot;world!&quot;)
+}
+
+func main()  {
+	hello:= HelloHandler{}
+	world:= WorldHandler{}
+	server := http.Server{
+		Addr: &quot;127.0.0.1:10000&quot;,
+	}
+	http.Handle(&quot;/hello&quot;, &amp;hello)
+	http.Handle(&quot;/world&quot;, &amp;world)
+	
+	//http://localhost:10000/
+	//http://localhost:10000/hello
+	//http://localhost:10000/world
+	server.ListenAndServe()
+}
+</code></pre>
+<h5 id="5处理器函数">5.处理器函数</h5>
+<blockquote>
+<p>处理器函数就是创建处理器的一种便利方式</p>
+</blockquote>
+<p>1.处理器函数</p>
+<blockquote>
+<p>1.与处理器拥有相同行为的函数；<br>
+2.这些函数与 ServeHTTP 方法拥有相同的签名（即参数相同）；</p>
+</blockquote>
+<p>2.处理器函数实现原理</p>
+<blockquote>
+<p>定义了一种 HandlerFunc 函数类型，可以将一个带有正确签名的函数 f 转换成一个带有方法 f 的处理器</p>
+</blockquote>
+<p>1.例：</p>
+<pre><code>func hello(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, &quot;Hello!&quot;)
+}
+
+//HandlerFunc，将 hello 函数，转换成一个带有 hello 方法的处理器 helloHandler
+//HandlerFunc 是定义的一种类型，此处是类型强制转化
+helloHandler := HandlerFunc(hello)
+</code></pre>
+<p>2.源码：HandlerFunc定义</p>
+<pre><code>type HandlerFunc func(ResponseWriter, *Request)
+
+// ServeHTTP calls f(w, r).
+func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
+	f(w, r)
+}
+</code></pre>
+<p>3.例：http.HandleFunc()</p>
+<blockquote>
+<p>注：不是 http.HandlerFunc()，二者意义不一样</p>
+</blockquote>
+<ul>
+<li>HandleFunc()：封装的简化处理器定义的方法，底层调用 HandlerFunc()，进行类型转化</li>
+<li>HandlerFunc()：定义的一种函数类型，将带有正确签名的函数 f 转换成一个带有方法 f 的处理器</li>
+</ul>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;net/http&quot;
+)
+
+//与上边多处理器函数，函数定位对比
+func hello(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, &quot;Hello!&quot;)
+}
+
+func world(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, &quot;world!&quot;)
+}
+
+func main()  {
+	server := http.Server{
+		Addr: &quot;127.0.0.1:10000&quot;,
+	}
+	http.HandleFunc(&quot;/hello&quot;, hello)
+	http.HandleFunc(&quot;/world&quot;, world)
+	
+	//http://localhost:10000/
+	//http://localhost:10000/hello
+	//http://localhost:10000/world
+	server.ListenAndServe()
+}
+</code></pre>
+<h5 id="6串联多个处理和和处理器函数">6.串联多个处理和和处理器函数</h5>
+<blockquote>
+<p>意义：防止代码重复、代码依赖</p>
+</blockquote>
+<p>串联处理器函数</p>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;net/http&quot;
+)
+
+func helloWorld(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, &quot;Hello world!\n&quot;)
+}
+
+//串联时注意函数类型
+func log(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, &quot;log!\n&quot;)
+		h(w, r)
+	}
+}
+
+func main()  {
+	server := http.Server{
+		Addr: &quot;127.0.0.1:10000&quot;,
+	}
+	http.HandleFunc(&quot;/hello&quot;, log(helloWorld))
+	//http://localhost:10000/hello
+	server.ListenAndServe()
+}
+</code></pre>
+<h5 id="6servemux-和-defaultservemux">6.ServeMux 和 DefaultServeMux</h5>
+<p>1.ServeMux</p>
+<blockquote>
+<p>1.是一个 HTTP请求的多路复用器；<br>
+2.ServeMux 结构包含一个映射：URL映射到对应处理器（找出最为匹配的 URL）；<br>
+3.因为ServeMux 结构实现了 ServeHTTP，所以是个处理器；</p>
+</blockquote>
+<p>2.DefaultServeMux</p>
+<blockquote>
+<p>1.是 ServeMux 结构的一个实例（不是实现）</p>
+</blockquote>
+<p>3.URL匹配规则</p>
+<blockquote>
+<p>1.如果绑定的 URL 不是以 / 结尾，完全匹配；<br>
+2.如果绑定的 URL 是以 / 结尾（/hello/），往前匹配（/hello/aa）；</p>
+</blockquote>
+<h5 id="7其它多路复用器-httrouter">7.其它多路复用器 HttRouter</h5>
+<blockquote>
+<p>ServeMux缺陷：无法使用变量实现 URL 模式匹配</p>
+</blockquote>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/julienschmidt/httprouter&quot;
+	&quot;net/http&quot;
+)
+
+func hello2(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Fprintf(w, &quot;Hello %s!&quot;, p.ByName(&quot;name&quot;))
+}
+
+
+func main()  {
+	mux := httprouter.New()
+	mux.GET(&quot;/hello/:name&quot;, hello2)
+
+	server := http.Server{
+		Addr: &quot;127.0.0.1:10000&quot;,
+	}
+	server.ListenAndServe()
+}
+</code></pre>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-18kuang-jia-gin/">
+              <span class="post-title">
+                go学习-18.框架-gin&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://wo-wo.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>石强博客</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

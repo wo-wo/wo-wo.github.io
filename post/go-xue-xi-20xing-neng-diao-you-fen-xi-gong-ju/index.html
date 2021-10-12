@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>go学习-20.性能调优：分析工具 | 石强博客</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="go学习-20.性能调优：分析工具 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="go学习-20.性能调优：分析工具"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-20xing-neng-diao-you-fen-xi-gong-ju/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="石强博客"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://wo-wo.github.io">石强博客</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://wo-wo.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
+        </span>
+            <h1>go学习-20.性能调优：分析工具</h1>
+            <span class="meta">
+            	Posted on
+              2021-10-12，12 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>[TOC]</p>
+<h2 id="pprof">pprof</h2>
+<p>软件开发过程中，项目上线并不是终点。上线后，还要对程序的取样分析运行情况，并重构现有的功能，让程序执行更高效更稳写。 golang的工具包内自带pprof功能，使找出程序中占内存和CPU较多的部分功能方便了不少。加上uber的火焰图，可视化显示，让我们在分析程序时更简单明了。</p>
+<h3 id="准备工作">准备工作</h3>
+<ul>
+<li>安装graphviz
+<ul>
+<li>brew install graphviz</li>
+</ul>
+</li>
+<li>将 $GOPATH/bin 加⼊ $PATH
+<ul>
+<li>Mac OS: 在 .bash_profile 中修改路径</li>
+</ul>
+</li>
+<li>安装 go-torch（不使用可以不装）
+<ul>
+<li>go get github.com/uber/go-torch</li>
+<li>下载并复制 flamegraph.pl （https://github.com/brendangregg/FlameGraph）⾄ $GOPATH/bin 路径下</li>
+<li>将 $GOPATH/bin 加⼊ $PATH</li>
+</ul>
+</li>
+</ul>
+<h3 id="pprof-2">pprof</h3>
+<ul>
+<li>
+<p>采样方式：</p>
+<ul>
+<li>runtime/pprof：工具型应用，采集程序（非 Server）的运行数据进行分析</li>
+<li>net/http/pprof：服务型应用，采集 HTTP Server 的运行时数据进行分析</li>
+</ul>
+</li>
+<li>
+<p>支持模式：</p>
+<ul>
+<li>Report generation：报告生成</li>
+<li>Interactive terminal use：交互式终端使用</li>
+<li>Web interface：Web 界面</li>
+</ul>
+</li>
+<li>
+<p>分析类型</p>
+<ul>
+<li>
+<p>CPU Profiling：</p>
+<blockquote>
+<p>CPU 分析是最常见的性能分析类型。</p>
+<p>按照一定的频率（默认10ms一次）采集所监听的应用程序 CPU（含寄存器）的使用情况，可确定应用程序在主动消耗 CPU 周期时花费时间的位置。</p>
+</blockquote>
+</li>
+<li>
+<p>Memory Profiling：</p>
+<blockquote>
+<p>内存性能分析记录堆内存分配时的堆栈信息，忽略栈内存分配信息。</p>
+<p>内存性能分析启用时，默认每1000次采样1次，这个比例是可以调整的。因为内存性能分析是基于采样的，因此基于内存分析数据来判断程序所有的内存使用情况是很困难的。</p>
+</blockquote>
+</li>
+<li>
+<p>Block Profiling：</p>
+<blockquote>
+<p>阻塞性能分析是 Go 特有的。</p>
+<p>阻塞性能分析用来记录一个协程等待一个共享资源花费的时间。在判断程序的并发瓶颈时会很有用。阻塞的场景包括：</p>
+<ul>
+<li>在没有缓冲区的信道上发送或接收数据。</li>
+<li>从空的信道上接收数据，或发送数据到满的信道上。</li>
+<li>尝试获得一个已经被其他协程锁住的排它锁。</li>
+</ul>
+<p>一般情况下，当所有的 CPU 和内存瓶颈解决后，才会考虑这一类分析。</p>
+<p>默认不开启，需要调用 <code>runtime.SetBlockProfileRate</code> 进行设置。</p>
+</blockquote>
+</li>
+<li>
+<p>Mutex Profiling：</p>
+<blockquote>
+<p>锁性能分析与阻塞分析类似，但专注于因为锁竞争导致的等待或延时。</p>
+<p>默认不开启，需要调用 <code>runtime.SetMutexProfileFraction</code> 进行设置。</p>
+</blockquote>
+</li>
+<li>
+<p>Goroutine Profiling：</p>
+<blockquote>
+<p>Goroutine 分析，可以对当前应用程序正在运行的 Goroutine 进行堆栈跟踪和分析。这项功能在实际排查中会经常用到，因为很多问题出现时的表象就是 Goroutine 暴增，而这时候我们要做的事情之一就是查看应用程序中的 Goroutine 正在做什么事情，因为什么阻塞了，然后再进行下一步。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="采样">采样</h3>
+<h4 id="runtimepprof工具型应用">runtime/pprof：工具型应用</h4>
+<ul>
+<li>通过嵌入代码，手动调用 runtime/pprof 的 API</li>
+<li>灵活性⾼，适⽤于特定代码段的分析</li>
+<li>API 相关⽂档 https://studygolang.com/static/pkgdoc/pkg/runtime_pprof.htm</li>
+<li>go tool pprof [binary] [binary.prof]</li>
+</ul>
+<h6 id="开启方式">开启方式</h6>
+<pre><code>import &quot;runtime/pprof&quot;
+//cpu
+f, err := os.Create(&quot;cpu.prof&quot;) //创建一个文件句柄
+pprof.StartCPUProfile(f) //开启
+pprof.StopCPUProfile() //关闭
+//内存
+pprof.WriteHeapProfile(f1)
+</code></pre>
+<h4 id="nethttppprof服务型应用">net/http/pprof：服务型应用</h4>
+<ul>
+<li>简单，适合于持续性运⾏的应⽤</li>
+<li>在应⽤程序中导⼊ import _ &quot;net/http/pprof&quot;，并启动 http server 即可</li>
+<li>http://<host>:<port>/debug/pprof/</li>
+<li>go tool pprof http://<host>:<port>/debug/pprof/profile?seconds=10 （默认值为30秒）</li>
+<li>go-torch -seconds 10 http://<host>:<port>/debug/pprof/profile</li>
+</ul>
+<h6 id="开启方式-2">开启方式</h6>
+<pre><code>//http包使用方式
+//如果使用了默认的http.DefaultServeMux（通常是代码直接使用 http.ListenAndServe(“0.0.0.0:8000”, nil)），只需要import _ &quot;net/http/pprof&quot;即可
+//如果使用的是自定义的 Mux，则需要手动注册一些路由规则：
+r.HandleFunc(&quot;/debug/pprof/&quot;, pprof.Index)
+r.HandleFunc(&quot;/debug/pprof/cmdline&quot;, pprof.Cmdline)
+r.HandleFunc(&quot;/debug/pprof/profile&quot;, pprof.Profile)
+r.HandleFunc(&quot;/debug/pprof/symbol&quot;, pprof.Symbol)
+r.HandleFunc(&quot;/debug/pprof/trace&quot;, pprof.Trace)
+
+//gin框架使用方式
+//1、github.com/gin-contrib/pprof
+//2、github.com/DeanThompson/ginpprof
+import &quot;github.com/gin-contrib/pprof&quot;
+pprof.Register(r)
+</code></pre>
+<h6 id="文件地址">文件地址</h6>
+<pre><code># http://&lt;host&gt;:&lt;port&gt;/debug/pprof/
+allocs：查看过去所有内存分配的样本，访问路径为 $HOST/debug/pprof/allocs。
+block：查看导致阻塞同步的堆栈跟踪，访问路径为 $HOST/debug/pprof/block。
+cmdline： 当前程序的命令行的完整调用路径。
+goroutine：查看当前所有运行的 goroutines 堆栈跟踪，访问路径为 $HOST/debug/pprof/goroutine。
+heap：查看活动对象的内存分配情况，访问路径为 $HOST/debug/pprof/heap。
+mutex：查看导致互斥锁的竞争持有者的堆栈跟踪，访问路径为 $HOST/debug/pprof/mutex。
+profile： 默认进行 30s 的 CPU Profiling，得到一个分析用的 profile 文件，访问路径为 $HOST/debug/pprof/profile。
+threadcreate：查看创建新 OS 线程的堆栈跟踪，访问路径为 $HOST/debug/pprof/threadcreate。
+
+1、web界面点击链接默认带debug=1，若没有debug参数，那么将会直接下载对应的 profile 文件。
+2、在部署环境中，为了网络安全，通常不会直接对外网暴露 pprof 的相关端口，因此会通过 curl、wget 等方式进行 profile 文件的间接拉取。
+3、debug 的访问方式是具有时效性的，在实际场景中，我们常常需要及时将当前状态下的 profile 文件给存储下来，便于二次分析。
+</code></pre>
+<h2 id="交互式终端go-tool-pprof">交互式终端（go tool pprof）</h2>
+<pre><code>#go tool pprof
+go tool pprof + prof文件进入交互式终端，有以下几个命令
+top  默认查看程序中占用cpu前10位的函数，后面可跟数字，默认以flat排列，可使用-cum以cum排列
+list +函数名命令查看具体的函数分析
+traces 查看调用链路
+pdf  可以生成可视化的pdf文件。
+svg  生成svg
+web  直接生成关系调用图（方块越大表示消耗越大）：
+     注意：如果没有安装graphviz，会出现Could not execute dot；may need to install graphviz
+
+#top详解
+(pprof) top
+Showing nodes accounting for 71.27s, 75.62% of 94.25s total
+Dropped 211 nodes (cum &lt;= 0.47s)
+Showing top 10 nodes out of 97
+      flat  flat%   sum%        cum   cum%
+    23.32s 24.74% 24.74%     23.32s 24.74%  runtime.pthread_cond_wait
+    10.09s 10.71% 35.45%     10.09s 10.71%  runtime.pthread_kill
+    10.08s 10.69% 46.14%     10.08s 10.69%  runtime.kevent
+     7.19s  7.63% 53.77%     19.04s 20.20%  main.GetFibonacciServe
+     5.10s  5.41% 59.18%      5.10s  5.41%  runtime.procyield
+     4.34s  4.60% 63.79%      8.12s  8.62%  runtime.scanobject
+     4.17s  4.42% 68.21%      4.17s  4.42%  runtime.pthread_cond_signal
+     2.72s  2.89% 71.10%      2.82s  2.99%  runtime.nanotime1
+     2.32s  2.46% 73.56%      2.33s  2.47%  runtime.usleep
+     1.94s  2.06% 75.62%      1.94s  2.06%  runtime.memclrNoHeapPointers
+     
+flat：当前函数占用CPU的耗时
+flat%：当前函数占用CPU的耗时百分比
+sum%：函数占用CPU的累积耗时百分比
+cum：当前函数+调用当前函数的占用CPU总耗时
+cum%：当前函数+调用当前函数的占用CPU总耗时百分比
+
+【flat和cum的区别】假设函数b由三部分组成：调用函数c、自己直接处理一些事情、调用函数d，其中调用函数c耗时1秒，自己直接处理事情耗时3秒，调用函数d耗时2秒，那么函数b的flat耗时就是3秒，cum耗时就是6秒。
+【flat%、cum%、sum%】flat%和cum%指的就是flat耗时和cum耗时占总耗时（也就是94.25秒）的百分比，而最后一个sum%指的就是每一行的flat%与上面所有行的flat%总和，代表从上到下的累计值，比如第二行的75.04%就等于第一行flat%的66.67%+本行flat%的8.37%，下面的以此类推
+</code></pre>
+<h4 id="cpu-profiling">CPU Profiling</h4>
+<pre><code>go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
+// 执行该命令后，需等待 30 秒（可调整 seconds 的值），pprof 会进行 CPU Profiling，结束后将默认进入 pprof 的命令行交互式模式，可以对分析的结果进行查看或导出。另外如果你所启动的 HTTP Server 是 TLS 的方式，那么在调用 go tool pprof 时，需要将调用路径改为：
+go tool pprof https+insecure://localhost:6060/debug/pprof/profile?seconds=30。
+</code></pre>
+<h4 id="heap-profiling">Heap Profiling</h4>
+<pre><code>go tool pprof http://localhost:6060/debug/pprof/heap
+// 执行该命令后，能够很快的拉取到其结果，因为它不需要像 CPU Profiling 做采样等待
+
+// 可以选择传 type 它默认显示的是 inuse_space，实际上可以针对多种内存概况进行分析，常用的类别如下：
+inuse_space：分析应用程序的常驻内存占用情况。
+alloc_objects：分析应用程序的内存临时分配情况。
+//另外还有 inuse_objects 和 alloc_space 类别，分别对应查看每个函数所分别的对象数量和查看分配的内存空间大小，具体可根据情况选用。
+go tool pprof -alloc_objects http://localhost:6060/debug/pprof/heap
+</code></pre>
+<h4 id="goroutine-profiling">Goroutine Profiling</h4>
+<pre><code>// 在查看 goroutine 时，我们可以使用 traces 命令，这个命令会打印出对应的所有调用栈，以及指标信息，可以让我们很便捷的查看到整个调用链路有什么，分别在哪里使用了多少个 goroutine，并且能够通过分析查看到谁才是真正的调用方
+</code></pre>
+<h4 id="mutex-profiling">Mutex Profiling</h4>
+<pre><code>// 需要注意的是 runtime.SetMutexProfileFraction 语句，如果未来希望进行互斥锁的采集，那么需要通过调用该方法来设置采集频率，若不设置或没有设置大于 0 的数值，默认是不进行采集的。
+func init() {
+	runtime.SetMutexProfileFraction(1)
+}
+</code></pre>
+<h4 id="block-profiling">Block Profiling</h4>
+<pre><code>// 与 Mutex 的 runtime.SetMutexProfileFraction 相似，Block 也需要调用 runtime.SetBlockProfileRate() 进行采集量的设置，否则默认关闭，若设置的值小于等于 0 也会认为是关闭。
+func init() {
+	runtime.SetBlockProfileRate(1)
+}
+</code></pre>
+<h2 id="web-界面">Web 界面</h2>
+<p>方法一（推荐）：</p>
+<pre><code># 该命令将在所指定的端口号运行一个 PProf 的分析用的站点。
+go tool pprof -http=:6001 profile
+
+# 包含内容：
+# Top
+# Graph
+# Flame Graph （火焰图）
+# Peek 相较于 Top 视图，增加了所属的上下文信息的展示，也就是函数的输出调用者/被调用者。
+# Source 主要是增加了面向源代码的追踪和分析，可以看到其开销主要消耗在哪里。
+# Disassemble
+</code></pre>
+<p>方法二：</p>
+<pre><code># 在go tool pprof交互式终端中使用web命令
+(pprof) web
+</code></pre>
+<h2 id="安全地使用nethttppprof">安全地使用net/http/pprof</h2>
+<h1 id="benchmark">benchmark</h1>
+<ul>
+<li>benchmark和普通的单元测试一样，都位于 <code>_test.go</code> 文件中。</li>
+<li>函数名以 <code>Benchmark</code> 开头，参数是 <code>b *testing.B</code>。和普通的单元测试用例很像，单元测试函数名以 <code>Test</code> 开头，参数是 <code>t *testing.T</code>。</li>
+<li><code>go test</code> 命令默认不运行 benchmark 用例的，如果我们想运行 benchmark 用例，则需要加上 <code>-bench</code> 参数。例如：</li>
+</ul>
+<pre><code>go test -bench .
+// 支持正则表达式，下面这个代表运行以Fib结尾的benchmark用例：
+go test -bench='Fib$' .
+// 默认使用全部cpu核数，可通过-cpu参数改变，-cpu支持传入一个列表作为参数，例如：
+go test -bench='Fib$' -cpu=2,4 .
+// 默认运行时间为1s，可通过-benchtime指定时间或者次数：
+go test -bench='Fib$' -benchtime=5s .
+go test -bench='Fib$' -benchtime=50x .
+// 默认执行一轮，可通过-count指定轮数：
+go test -bench='Fib$' -benchtime=5s -count=3 .
+// 可通过-benchmem可查看内存分配量和分配次数：
+go test -bench=. -benchmem
+//常用方法：
+b.StopTimer() //暂停计时
+b.ResetTimer() //重置定时器
+b.StartTimer() //开始计时
+//下面输出的意思是：通过1s时间内运行该方法33次,每次需要30403687ns，进行内存分配40次，每次分配45188395B内存
+BenchmarkGenerate-8         33  30403687 ns/op  45188395 B/op  40 allocs/op
+</code></pre>
+<h1 id="延伸阅读">延伸阅读</h1>
+<p><a href="https://deepzz.com/post/the-command-flag-of-go-test.html">Go 测试，go test 工具的具体指令 flag</a></p>
+<p><a href="https://golang2.eddycjy.com/posts/ch6/03-trace/">go tool trace</a></p>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-19go-web-request/">
+              <span class="post-title">
+                go学习-19.go web request&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://wo-wo.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>石强博客</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

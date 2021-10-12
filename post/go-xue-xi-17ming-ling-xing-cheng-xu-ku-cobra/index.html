@@ -9,14 +9,14 @@
   <meta name="keywords" content="">
   <meta name="description" content="">
   <meta name="author" content="kveln">
-  <title>关于 | 石强博客</title>
+  <title>go学习-17.命令行程序库-cobra | 石强博客</title>
   <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
   <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
   <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
   <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
   <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-  <link rel="alternate" type="application/rss+xml" title="关于 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="go学习-17.命令行程序库-cobra | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
   <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
   <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
   <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
@@ -25,8 +25,8 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-    <meta property="og:description" content="关于"/>
-    <meta property="og:url" content="https://wo-wo.github.io/post/about/"/>
+    <meta property="og:description" content="go学习-17.命令行程序库-cobra"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-17ming-ling-xing-cheng-xu-ku-cobra/"/>
     <meta property="og:locale" content="zh-CN"/>
     <meta property="og:type" content="website"/>
     <meta property="og:site_name" content="石强博客"/>
@@ -80,11 +80,13 @@
           <div class="post-heading">
           	<span class="tags">
           	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
         </span>
-            <h1>关于</h1>
+            <h1>go学习-17.命令行程序库-cobra</h1>
             <span class="meta">
             	Posted on
-              2019-01-25，1 min read
+              2021-10-12，5 min read
             </span>
           </div>
         </div>
@@ -97,15 +99,201 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-          <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+          <p>[toc]</p>
+<p><a href="https://zhuanlan.zhihu.com/p/103363533">Go 每日一库之 cobra</a></p>
+<blockquote>
+<p>编写命令行程序；<br>
+同时，它也提供了一个脚手架（生成器），用于生成基于 cobra 的应用程序框架</p>
 </blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+<h3 id="1特性">1.特性</h3>
+<ul>
+<li>
+<p>轻松支持子命令，如app server，app fetch等；</p>
+</li>
+<li>
+<p>完全兼容 POSIX 选项（包括短、长选项）；</p>
+</li>
+<li>
+<p>嵌套子命令；</p>
+</li>
+<li>
+<p>全局、本地层级选项。可以在多处设置选项，按照一定的顺序取用；</p>
+</li>
+<li>
+<p>使用脚手架轻松生成程序框架和命令；</p>
+</li>
+<li>
+<p>设置钩子函数，在命令执行前、后执行某些操作；</p>
+</li>
+<li>
+<p>生成 Markdown/ReStructed Text/Man Page 格式的文档；</p>
+</li>
+</ul>
+<h3 id="2基本概念">2.基本概念</h3>
+<ul>
+<li>
+<p>命令（Command）：就是需要执行的操作；</p>
+</li>
+<li>
+<p>参数（Arg）：命令的参数，即要操作的对象；</p>
+</li>
+<li>
+<p>选项（Flag）：命令选项可以调整命令的行为。</p>
+</li>
+</ul>
+<pre><code># 例：
+# hugo 命令，server 子命令，--port 选项
+hugo server --port 1234
+# git 命令，clone 子命令，URL 参数，--bare 选项
+git clone URL --bare
+</code></pre>
+<h3 id="3快速使用">3.快速使用</h3>
+<h4 id="1安装库">1.安装库</h4>
+<blockquote>
+<p>注：会在 <code>$GOPATH/bin</code> 目录下创建一个名叫cobra可执行文件。</p>
+</blockquote>
+<pre><code># 1.安装包 cobra
+# -u：更新已有的代码包及其依赖包
+# 没 -u，包已存在时，不会更新
+go get -u github.com/spf13/cobra/cobra
+
+# 2.确认 cobra 是否被安装在了 $GOPATH/bin下
+# 注：防止 $GOPATH 失效，导致安装的 go 命令，不可执行
+ls -al $GOPATH/bin | grep cobra
+</code></pre>
+<h4 id="2错误command-not-found-cobra">2.错误：command not found: cobra</h4>
+<blockquote>
+<p>cobra没能正常安装。<br>
+引入 $GOPATH，重新安装</p>
+</blockquote>
+<ul>
+<li>注1：电脑重启后，~/.base_profile 定义的 $GOPATH 可能会失效</li>
+<li>注2：已经安装过的go命令，后续突然不可执行了，基本都是 $GOPATH 失效，例：gmchart</li>
+</ul>
+<p><img src="https://gitee.com/shizq/imgs/raw/master/PicGo/20210323160756.png" alt="" loading="lazy"><br>
+<img src="https://gitee.com/shizq/imgs/raw/master/PicGo/20210323160820.png" alt="" loading="lazy"></p>
+<h4 id="3脚手架">3.脚手架</h4>
+<pre><code># 1.初始化
+# appName：项目名，只能是相对路径
+# --pkg-name：包名。main.go 中 import 的包名
+# cobra init appName --pkg-name pgkName
+cobra init go_mod/monitor --pkg-name monitor
+
+# 2.添加子命令
+cobra add {childCmd}
+</code></pre>
+<h5 id="1gopath">1.GOPATH</h5>
+<pre><code># 1.进入 $GOPATH/src
+cd $GOPATH/src
+
+# 2.初始化
+cobra init monitor --pkg-name monitor
+
+# 3.编译
+# -o：自定义编译文件名
+# {cmd}：自定义可执行文件名
+# 编译后的文件，可以在任意目录执行
+# go build -o {cmd}
+go build -o monitor
+
+# 4.执行
+./monitor
+</code></pre>
+<h5 id="2go-mod">2.go mod</h5>
+<blockquote>
+<p>非 $GOPATH 目录，需要使用 go mod 模式。<br>
+否则 cobra 初始化后，找不到对应包</p>
+</blockquote>
+<pre><code># 1.使用 cobra 生成项目
+cobra init monitorCobra --pkg-name monitorCobra
+
+# 2.使用 go mod
+cd monitorCobra
+go mod init monitorCobra
+
+# 3.下载依赖包 go mod
+# go1.15
+go mod download
+go run main.go
+# go1.16
+go mod vendor
+# 第三种
+go mod tidy -v
+
+# 4.重新在 ide 打开
+
+# 5.编译
+go build -o monitor
+
+# 6.执行
+./monitor
+</code></pre>
+<h3 id="4简单介绍">4.简单介绍</h3>
+<h4 id="1执行">1.执行</h4>
+<pre><code># 1.执行
+# 不要直接 go run，需要编译成可执行命令
+go build -o {cmd}
+
+# 2.帮助信息
+./{cmd} -h
+./{cmd} {child_cmd} -h
+</code></pre>
+<h4 id="2命令">2.命令</h4>
+<blockquote>
+<p>命令、子命令，都是用 Cobra.Command{}结构体表示；<br>
+常用的结构体属性：Use/Short/Long/Run</p>
+</blockquote>
+<pre><code># 1.Use：命令怎么被调用
+# 格式：name arg1 [arg2]
+# name命令，arg1必填参数，arg2可选参数，参数可以多个
+
+# 2.Short/Long：命令的帮助信息，前者简短，后者详尽
+
+# 3.Run：实际执行操作的函数
+</code></pre>
+<h4 id="3选项">3.选项</h4>
+<blockquote>
+<p>永久选项（命令、子命令都可使用）<br>
+本地选项（子命令）<br>
+pflag包解析</p>
+</blockquote>
+<pre><code># 1.永久选项 rootCmd
+# 参数：接收变量、长选项、短选项名、默认值和、帮助信息
+var Verbose bool
+rootCmd.PersistentFlags().BoolVarP(&amp;Verbose, &quot;verbose&quot;, &quot;v&quot;, false, &quot;verbose output&quot;)
+
+# 2.本地选项 {childCmd}
+var Source string
+{childCmd}.Flags().StringVarP(&amp;Source, &quot;source&quot;, &quot;s&quot;, &quot;&quot;, &quot;Source directory to read from&quot;)
+</code></pre>
+<h4 id="4配置文件">4.配置文件</h4>
+<pre><code># 方法1.脚手架生成后，会自动绑定选项 config，允许在命令行中指定
+func init() {
+    // initConfig 函数会在绑定选项后，才执行
+	cobra.OnInitialize(initConfig)
+
+    rootCmd.PersistentFlags().StringVar(&amp;cfgFile, &quot;config&quot;, &quot;&quot;, &quot;config file (default is $HOME/.monitorCobra.yaml)&quot;)
+}
+
+func initConfig() {...}
+
+# 方法2.手动在项目中写死
+func initConfig() {
+    //直接写死，不接收选项自定义
+    cfgFile = &quot;./conf/config.yaml&quot;
+    ...
+}
+</code></pre>
 
           
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-16li-jian-kong-jiao-ben/">
+              <span class="post-title">
+                go学习-16.例：监控脚本&rarr;
+              </span>
+            </a>
+          </p>
+        
         <div class="comment">
           
         </div>

@@ -9,14 +9,14 @@
   <meta name="keywords" content="">
   <meta name="description" content="">
   <meta name="author" content="kveln">
-  <title>关于 | 石强博客</title>
+  <title>go学习-18.框架-gin | 石强博客</title>
   <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
   <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
   <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
   <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
   <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-  <link rel="alternate" type="application/rss+xml" title="关于 | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="alternate" type="application/rss+xml" title="go学习-18.框架-gin | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
   <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
   <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
   <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
@@ -25,8 +25,8 @@
   <script>hljs.initHighlightingOnLoad();</script>
   
 
-    <meta property="og:description" content="关于"/>
-    <meta property="og:url" content="https://wo-wo.github.io/post/about/"/>
+    <meta property="og:description" content="go学习-18.框架-gin"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-18kuang-jia-gin/"/>
     <meta property="og:locale" content="zh-CN"/>
     <meta property="og:type" content="website"/>
     <meta property="og:site_name" content="石强博客"/>
@@ -80,11 +80,13 @@
           <div class="post-heading">
           	<span class="tags">
           	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
         </span>
-            <h1>关于</h1>
+            <h1>go学习-18.框架-gin</h1>
             <span class="meta">
             	Posted on
-              2019-01-25，1 min read
+              2021-10-12，4 min read
             </span>
           </div>
         </div>
@@ -97,15 +99,188 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-          <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+          <p>[toc]</p>
+<h3 id="1安装">1.安装</h3>
+<pre><code># 1.下载并安装
+go get -u github.com/gin-gonic/gin
+
+# 2.创建项目
+mkdir ~/go_mod/ginTest
+cd ~/go_mod/ginTest
+go mod init ginTest
+
+</code></pre>
+<h4 id="1错误">1.错误</h4>
+<p>1.go get ... time out</p>
+<blockquote>
+<p>注释掉 /etc/hosts 中的 github<br>
+防止有其它代理，重启电脑</p>
 </blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+<h3 id="2快速开始">2.快速开始</h3>
+<p>1.定义路由、监听端口</p>
+<pre><code>package main
+
+import (
+	&quot;github.com/gin-gonic/gin&quot;
+	&quot;net/http&quot;
+)
+
+func main() {
+	// 使用默认中间件创建一个gin路由器
+	// logger and recovery (crash-free) 中间件
+	r := gin.Default()
+	//定义get请求，路由user
+	r.GET(&quot;/user&quot;, func(c *gin.Context) {
+		//响应。字符串
+		c.String(http.StatusOK, &quot;test&quot;)
+	})
+
+	// 默认启动的是 8080端口，也可以自己定义启动端口
+	// router.Run(&quot;:3000&quot;)
+	r.Run()
+}
+</code></pre>
+<p>2.启动服务</p>
+<pre><code># 会自动监听端口，不需要nginx等web配置
+go run main.go
+</code></pre>
+<p>3.测试</p>
+<pre><code># 端口不可省略
+curl http://localhost:8080/user
+</code></pre>
+<h3 id="3常用功能">3.常用功能</h3>
+<h4 id="1请求参数">1.请求参数</h4>
+<h5 id="1get请求">1.GET请求</h5>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/gin-gonic/gin&quot;
+	&quot;net/http&quot;
+)
+
+func main() {
+	r := gin.Default()
+	//声明1：路由中声明参数
+	r.GET(&quot;/user/:name/:action/&quot;, func(c *gin.Context) {
+        name := c.Param(&quot;name&quot;)
+        action := c.Param(&quot;action&quot;)
+        c.String(http.StatusOK, &quot;%s is %s&quot;, name, action)
+    })
+    //声明2：*后的所有路由都作为参数action的值
+    r.GET(&quot;/user/:name/*action&quot;, func(c *gin.Context) {
+        name := c.Param(&quot;name&quot;)
+        action := c.Param(&quot;action&quot;)
+        c.String(http.StatusOK, &quot;%s is %s&quot;, name, action)
+    })
+	//声明3：从&amp;中获取参数
+	r.GET(&quot;/user/login&quot;, func(c *gin.Context) {
+		//接收get请求参数
+		name := c.DefaultQuery(&quot;name&quot;, &quot;tom&quot;)
+		password := c.Query(&quot;password&quot;)//c.Request.URL.Query().Get(&quot;&quot;)的简写
+		//获取数组（字符串切片）
+		common := c.QueryArray(&quot;common&quot;)
+
+		fmt.Printf(&quot;name is %s, password is %s \n&quot;, name, password)
+		fmt.Println(&quot;common params is: \n&quot;, common)
+
+		c.String(http.StatusOK, &quot;Hi %s, welcome!&quot;, name)
+	})
+	r.Run()
+}
+</code></pre>
+<p>验证</p>
+<pre><code># 监听端口
+go run main.go
+
+# 测试
+curl http://localhost:8080/user/login\?name\=john\&amp;password\=123456\&amp;common=1,2
+</code></pre>
+<h5 id="2post请求">2.POST请求</h5>
+<blockquote>
+<p>post请求，允许传递get形式的参数，通过get方式获取到对应参数</p>
+</blockquote>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/gin-gonic/gin&quot;
+	&quot;net/http&quot;
+)
+
+func main() {
+	r := gin.Default()
+
+	r.POST(&quot;/user/welcome&quot;, func(c *gin.Context) {
+		name := c.PostForm(&quot;name&quot;)
+		common := c.PostFormArray(&quot;common&quot;)
+
+		fmt.Printf(&quot;name is %s\n&quot;, name)
+		fmt.Println(&quot;common is: \n&quot;, common)
+
+		c.JSON(http.StatusOK, gin.H{
+			&quot;status&quot;: http.StatusOK,
+			&quot;message&quot;: &quot;success&quot;,
+		})
+	})
+	r.Run()
+}
+</code></pre>
+<p>验证</p>
+<pre><code># 监听端口
+go run main.go
+
+# 测试
+curl -X POST -d &quot;name=quene&amp;common=1,2&quot;  http://localhost:8080/user/welcome
+</code></pre>
+<h4 id="2路由">2.路由</h4>
+<h5 id="1路由分组">1.路由分组</h5>
+<pre><code>func main() {
+	router := gin.Default()
+
+	// Simple group: v1
+	v1 := router.Group(&quot;/v1&quot;)
+	{
+		v1.POST(&quot;/login&quot;, loginEndpoint)
+		v1.POST(&quot;/submit&quot;, submitEndpoint)
+		v1.POST(&quot;/read&quot;, readEndpoint)
+	}
+
+	// Simple group: v2
+	v2 := router.Group(&quot;/v2&quot;)
+	{
+		v2.POST(&quot;/login&quot;, loginEndpoint)
+		v2.POST(&quot;/submit&quot;, submitEndpoint)
+		v2.POST(&quot;/read&quot;, readEndpoint)
+	}
+
+	router.Run(&quot;:8080&quot;)
+}
+</code></pre>
+<h4 id="3中间件">3.中间件</h4>
+<pre><code># 1.无中间件启动
+r := gin.New()
+
+# 2.添加中间件
+# gin中 HandlerFunc 都是中间件
+r.Use(gin.Logger())
+
+# 3.路由添加中间件，可以添加任意多个
+r.GET(&quot;/user/login&quot;, AuthRequired(), loginEndpoint)
+</code></pre>
+<h4 id="4日志">4.日志</h4>
+<pre><code>
+</code></pre>
 
           
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-17ming-ling-xing-cheng-xu-ku-cobra/">
+              <span class="post-title">
+                go学习-17.命令行程序库-cobra&rarr;
+              </span>
+            </a>
+          </p>
+        
         <div class="comment">
           
         </div>

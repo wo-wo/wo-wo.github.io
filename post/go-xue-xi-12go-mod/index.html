@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>go学习-12.go mod | 石强博客</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="go学习-12.go mod | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="go学习-12.go mod"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-12go-mod/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="石强博客"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://wo-wo.github.io">石强博客</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://wo-wo.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
+        </span>
+            <h1>go学习-12.go mod</h1>
+            <span class="meta">
+            	Posted on
+              2021-10-12，7 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>[toc]</p>
+<h3 id="问题">问题</h3>
+<p>1.Go Module 存在的意义与解决的问题<br>
+2.如何维护 module 模式的代码</p>
+<h3 id="1go的2种模式">1.go的2种模式</h3>
+<p>####1.环境变量 GO111MODULE</p>
+<ul>
+<li>
+<p>1.off：GOPATH模式</p>
+<blockquote>
+<p>在vendor目录下和GOPATH目录中查找依赖包</p>
+</blockquote>
+</li>
+<li>
+<p>2.on：modules模式</p>
+<blockquote>
+<p>go命令行会使用modules功能，而不会访问GOPATH<br>
+GOPATH不再在build时扮演导入的角色，但仍会存储下载依赖包，目录：GOPATH/pkg/mod</p>
+</blockquote>
+</li>
+<li>
+<p>3.auto：默认模式</p>
+<blockquote>
+<p>当前目录在GOPATH/src目录之外；且当前目录或其子目录包含go.mod文件，会启动 modules模式</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="2go-module-存在的意义与解决的问题">2.Go Module 存在的意义与解决的问题</h4>
+<blockquote>
+<p>1.解决只能在 GOPATH 指定路径开发<br>
+2.实现有效的版本管理<br>
+3.支持 Go 原生工具集依赖管理。</p>
+</blockquote>
+<p><a href="https://studygolang.com/articles/23964?fr=sidebar">Go Module 存在的意义与解决的问题</a></p>
+<h3 id="2go-modulegolang包管理工具">2.Go module（Golang包管理工具）</h3>
+<blockquote>
+<p>使用go mod 管理项目，就不需要非得把项目放到GOPATH指定目录下；<br>
+可以在磁盘的任何位置新建一个项目，且需要在目录下创建一个go.mod文件</p>
+</blockquote>
+<p><a href="https://blog.csdn.net/benben_2015/article/details/82227338">Go module的介绍及使用</a></p>
+<h4 id="1gomod文件">1.go.mod文件</h4>
+<blockquote>
+<p>1.定义<code>模块路径</code>(命名空间)<br>
+2.require：引入 build 时依赖模块（包）及特定版本<br>
+3.exclude：排除某些包的特别版本<br>
+4.replace：取代当前项目中的某些依赖包</p>
+</blockquote>
+<pre><code>// 模块路径(命名空间)
+module webMerticMonitor
+
+go 1.12
+
+require (
+	github.com/Shopify/sarama v1.19.0
+	github.com/fortytw2/leaktest v1.3.0 // indirect
+	github.com/mailru/easyjson v0.7.6 // indirect
+	github.com/olivere/elastic v6.2.34+incompatible
+	github.com/spf13/viper v1.7.1
+	golang.org/x/sys v0.0.0-20200116001909-b77594299b42 // indirect
+	gopkg.in/yaml.v2 v2.2.8 // indirect
+)
+
+replace (
+	julive v0.0.0-00010101000000-000000000000 =&gt; ../lib
+)
+
+</code></pre>
+<p><strong>注：go.mod文件用//注释，而不用/**/</strong></p>
+<h4 id="2mod对其它命令支持">2.mod对其它命令支持</h4>
+<p>1.go build -mod [mode]</p>
+<blockquote>
+<p>mode有以下几种取值：readonly，release，vendor。</p>
+</blockquote>
+<pre><code># 例：生成可执行文件，并将项目的依赖包放到主模块的vendor目录下
+go build -mod=vendor
+</code></pre>
+<p>2.go get -m [packages]</p>
+<blockquote>
+<p>下载依赖包到GOPATH/pkg/mod目录,并且将依赖写入到go.mod文件</p>
+</blockquote>
+<h4 id="3go-mod命令">3.go mod命令</h4>
+<h5 id="1go-mod-download">1.go mod download</h5>
+<blockquote>
+<p>预填充本地缓存</p>
+</blockquote>
+<p>用法：go mod download [-dir] [-json] [modules]</p>
+<blockquote>
+<p>下载指定的模块[modules]<br>
+没有指定参数，将主模块下的所有依赖下载下来</p>
+</blockquote>
+<h5 id="2go-mod-init">2.go mod init</h5>
+<blockquote>
+<p>在当前目录中初始化和创建一个新的go.mod文件</p>
+</blockquote>
+<p>用法：go mod init [module]</p>
+<blockquote>
+<p>[module]：模块名（命名空间）</p>
+</blockquote>
+<p><strong>注1：使用这条命令时，go.mod文件必须提前不能存在</strong><br>
+<strong>注2：在 main.go 里如果需要使用项目内的包，需要使用这个包的<code>模块内的绝对路径</code>（命名空间）来导入</strong></p>
+<h5 id="3go-mod-tidy">3.go mod tidy</h5>
+<blockquote>
+<p>添加缺失的模块以及移除不需要的模块</p>
+</blockquote>
+<p>用法：go mod tidy [-v]</p>
+<h6 id="1错误dial-tcp-17221727145443-io-timeout">1.错误：dial tcp 172.217.27.145:443: i/o timeout</h6>
+<blockquote>
+<p>国内把mod墙，需要设置代理GOPROXY到环境变量</p>
+</blockquote>
+<pre><code>vi ~/.bash_profile
+******
+export GOPROXY=https://goproxy.cn,direct
+export GO111MODULE=on
+******
+
+source ~/.bash_profile
+</code></pre>
+<pre><code>dial tcp 172.217.27.145:443: i/o timeout
+</code></pre>
+<h6 id="2注意启用-go-module后依赖包下载位置">2.注意：启用 go module后，依赖包下载位置</h6>
+<blockquote>
+<p><code>启用 go module：</code>env 中配置 GO111MODULE 为 on或 auto；<br>
+<code>下载依赖包目录：</code>不管go get 或 go mod tidy 等都会下载到固定目录：$GOPATH/pkg/mod，并且目录名里的大写字母会转成小写字母 , 前面加一个!</p>
+</blockquote>
+<h5 id="4go-mod-vendor">4.go mod vendor</h5>
+<blockquote>
+<p>将build阶段需要的所有依赖包放到主模块所在的vendor目录中</p>
+</blockquote>
+<p>用法：go mod vendor [-v]</p>
+<h5 id="5go-mod-verify">5.go mod verify</h5>
+<blockquote>
+<p>1.检查当前模块的依赖是否已经存储在本地下载的源代码缓存中（GOPATH/pkg/mod）；<br>
+2.检查自从下载下来是否有修改；<br>
+3.如果所有的模块都没有修改，那么会打印 all modules verified</p>
+</blockquote>
+<pre><code># 例子
+module webMerticMonitor
+
+go 1.12
+
+require (
+	github.com/Shopify/sarama v1.19.0
+	github.com/fortytw2/leaktest v1.3.0 // indirect
+	github.com/mailru/easyjson v0.7.6 // indirect
+	github.com/olivere/elastic v6.2.34+incompatible
+	github.com/spf13/viper v1.7.1
+	golang.org/x/sys v0.0.0-20200116001909-b77594299b42 // indirect
+	gopkg.in/yaml.v2 v2.2.8 // indirect
+	julive v0.0.0-00010101000000-000000000000
+)
+
+replace julive =&gt; ../lib
+</code></pre>
+<p>校验</p>
+<pre><code>go mod verify
+# julive v0.0.0-00010101000000-000000000000: missing ziphash: open hash: no such file or directory
+</code></pre>
+<p>修改mod文件：严格遵守 require,replace</p>
+<pre><code>module webMerticMonitor
+
+go 1.12
+
+require (
+	github.com/Shopify/sarama v1.19.0
+	github.com/fortytw2/leaktest v1.3.0 // indirect
+	github.com/mailru/easyjson v0.7.6 // indirect
+	github.com/olivere/elastic v6.2.34+incompatible
+	github.com/spf13/viper v1.7.1
+	golang.org/x/sys v0.0.0-20200116001909-b77594299b42 // indirect
+	gopkg.in/yaml.v2 v2.2.8 // indirect
+)
+
+replace (
+	julive v0.0.0-00010101000000-000000000000 =&gt; ../lib
+)
+</code></pre>
+<p>校验</p>
+<pre><code>go mod verify
+# all modules verified
+</code></pre>
+<h3 id="3goland-导入包含-mod-项目">3.goland 导入包含 mod 项目</h3>
+<h4 id="1gopath方式">1.GOPATH方式</h4>
+<figure data-type="image" tabindex="1"><img src="https://gitee.com/shizq/imgs/raw/master/PicGo/20210114182534.png" alt="" loading="lazy"></figure>
+<h4 id="2module方式">2.module方式</h4>
+<p>1.导入项目<br>
+<img src="https://gitee.com/shizq/imgs/raw/master/PicGo/20210114183306.png" alt="" loading="lazy"></p>
+<p>2.main 中导入的包找不到的(即使本地gopath路径下有)<br>
+<img src="https://gitee.com/shizq/imgs/raw/master/PicGo/20210114181911.png" alt="" loading="lazy"></p>
+<p>3.使用alt+Enter 就是goland传统的导入包的方式 或者 go mod download，<br>
+<img src="https://gitee.com/shizq/imgs/raw/master/PicGo/20210114183737.png" alt="" loading="lazy"></p>
+<h3 id="4gopath切换到go-mod">4.GOPATH切换到go mod</h3>
+<blockquote>
+<p>其它包管理方式：GOPATH,GOVENDOR,...都可以通过下列方式切换到 go mod</p>
+</blockquote>
+<pre><code># 1.初始化，生成 go mod 文件
+go mod init [mode]
+
+# 2.通过编译目录及子目录所有文件，下载所有依赖包
+go build ./...
+# 生成的可执行文件，看不到，可以通过下列方式，在 src/bin 中找到
+go install ./...
+</code></pre>
+<h3 id="5依赖包可视化-gmchart">5.依赖包可视化 gmchart</h3>
+<blockquote>
+<p>检索 Go Module 依赖关系 可视化</p>
+</blockquote>
+<p><a href="https://studygolang.com/articles/32776#reply0">go mod graph 可视化——gmchart</a><br>
+<a href="https://github.com/PaulXu-cn/go-mod-graph-chart">github-gmchart</a></p>
+<h4 id="1安装">1.安装</h4>
+<pre><code># 安装包 gmchart
+go get -u github.com/PaulXu-cn/go-mod-graph-chart/gmchart
+</code></pre>
+<h4 id="2使用">2.使用</h4>
+<pre><code># 注：如果不可用，确认 $GOPATH 是否已经失效，导致 gmchart 安装位置失效
+cd goProject
+go mod graph | gmchart
+</code></pre>
+<p>浏览器会自动打开新页面，展示包依赖关系</p>
+<blockquote>
+<p>如果没有，手动打开浏览器 <code>http://127.0.0.1:60306/</code></p>
+</blockquote>
+<h3 id="6错误">6.错误</h3>
+<h4 id="1dial-tcp-216239371443-io-timeout">1.dial tcp 216.239.37.1:443: i/o timeout</h4>
+<blockquote>
+<p>go get或go mod时都可能产生此错误，原因是墙。需要设置代理，并开启go mod支持</p>
+</blockquote>
+<pre><code>go env -w GO111MODULE=on
+go env -w GOPROXY=https://goproxy.cn,direct
+</code></pre>
+<h4 id="2dial-tcp-216239371443-connectex-a-connection-attempt-failed">2.dial tcp 216.239.37.1:443: connectex: A connection attempt failed</h4>
+<blockquote>
+<p>关闭环境变量 GOSUMDB。默认是sum.golang.org</p>
+</blockquote>
+<pre><code>go env -w GOSUMDB=off
+</code></pre>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-11shu-ju-ku-cao-zuo/">
+              <span class="post-title">
+                go学习-11.数据库操作&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://wo-wo.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>石强博客</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+

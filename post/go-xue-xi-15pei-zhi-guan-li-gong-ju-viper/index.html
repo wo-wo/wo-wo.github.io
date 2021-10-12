@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+  <meta name="referrer" content="never">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="author" content="kveln">
+  <title>go学习-15.配置管理工具-viper | 石强博客</title>
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://wo-wo.github.io/media/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!--  <link href="https://wo-wo.github.io/media/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link rel="alternate" type="application/rss+xml" title="go学习-15.配置管理工具-viper | 石强博客 » Feed" href="https://wo-wo.github.io/atom.xml">
+  <link rel="stylesheet"href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/styles/androidstudio.min.css">
+  <link href="https://wo-wo.github.io/styles/main.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.10/build/highlight.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/jquery.min.js"></script> -->
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+    <meta property="og:description" content="go学习-15.配置管理工具-viper"/>
+    <meta property="og:url" content="https://wo-wo.github.io/post/go-xue-xi-15pei-zhi-guan-li-gong-ju-viper/"/>
+    <meta property="og:locale" content="zh-CN"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="石强博客"/>
+  </head>
+  <body>
+  	<!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="https://wo-wo.github.io">石强博客</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/">首页</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/archives">归档</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/tags">标签</a>
+              
+          </li>
+          
+          <li class="nav-item">
+              
+              <a class="nav-link" href="/post/about">关于</a>
+              
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://wo-wo.github.io/media/images/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+          	<span class="tags">
+          	 
+            <a href="https://wo-wo.github.io/tag/aV8KFenpZ/" class="tag">Go</a>
+            
+        </span>
+            <h1>go学习-15.配置管理工具-viper</h1>
+            <span class="meta">
+            	Posted on
+              2021-10-12，6 min read
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>[toc]</p>
+<h4 id="1特性">1.特性</h4>
+<ul>
+<li>1.支持 JSON/TOML/YAML/HCL/envfile/Java properties 等多种格式的配置文件；</li>
+<li>2.从环境变量、命令行选项和io.Reader中读取配置</li>
+<li>3.可以设置监听配置文件的修改，修改时自动加载新的配置</li>
+<li>4.从远程配置系统中读取和监听修改，如 etcd/Consul</li>
+</ul>
+<h4 id="2快速使用">2.快速使用</h4>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/spf13/viper&quot;
+	&quot;log&quot;
+)
+
+func main()  {
+	//设置文件名（不要带后缀）、类型、搜索路径（可以多个）、默认值
+	viper.SetConfigName(&quot;config&quot;)
+	viper.SetConfigType(&quot;yaml&quot;)
+	viper.AddConfigPath(&quot;.&quot;)
+	viper.SetDefault(&quot;redis.port&quot;, 6379)
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatal(&quot;read config failed:%v&quot;, err)
+	}
+
+	fmt.Println(viper.Get(&quot;app_name&quot;))
+	fmt.Println(viper.Get(&quot;redis.port&quot;))
+}
+</code></pre>
+<h4 id="3读取键">3.读取键</h4>
+<pre><code># 1.Get(key)
+# Get方法返回一个interface{}的值，使用有所不便
+viper.Get(&quot;redis.port&quot;)
+
+# 2.GetType(key)
+# Type:Int/IntSlice/String/StringSlice/Time/Duration等
+# 如果指定的键不存在或类型不正确，GetType方法返回对应类型的零值
+viper.GetInt(&quot;redis.port&quot;)
+</code></pre>
+<h4 id="4设置键值">4.设置键值</h4>
+<ol>
+<li>可以多个地方设置，优先级（从高到低）</li>
+</ol>
+<ul>
+<li>viper.Set()</li>
+<li>命令行选项</li>
+<li>环境变量</li>
+<li>配置文件</li>
+<li>默认值</li>
+</ul>
+<pre><code># 1.set
+viper.Set(&quot;redis.port&quot;, 5381)
+
+# 2.命令行选项
+# viper 使用 pflag 库来解析选项
+# 解析：pflag.Parse
+func init() {
+  pflag.Int(&quot;redis.port&quot;, 8381, &quot;Redis port to connect&quot;)
+
+  // 绑定命令行
+  viper.BindPFlags(pflag.CommandLine)
+}
+
+# 3.环境变量
+func init() {
+  // 绑定环境变量-全绑定
+  viper.AutomaticEnv()
+  
+  // 绑定环境变量-单独绑定
+  // 一个参数：即是键名，也是环境变量名
+  viper.BindEnv(&quot;redis.port&quot;)
+  // 二个参数：前边键名，后边环境变量名
+  // 注：如果对应环境变量不存在，自动将键名全部转为大写再查找一次
+  viper.BindEnv(&quot;go.path&quot;, &quot;GOPATH&quot;)
+}
+# 验证
+func main() {
+  // 可以设置前缀 viper.SetEnvPrefix
+  // Get的时候，viper 会自动加上这个前缀再从环境变量中查找
+  fmt.Println(&quot;GOPATH: &quot;, viper.Get(&quot;GOPATH&quot;))
+}
+
+# 4.配置文件
+viper.SetConfigName(&quot;config&quot;)
+viper.SetConfigType(&quot;yaml&quot;)
+viper.AddConfigPath(&quot;.&quot;)
+viper.ReadInConfig()
+
+# 5.默认值
+viper.SetDefault(&quot;redis.port&quot;, 6379)
+</code></pre>
+<h4 id="5读取配置">5.读取配置</h4>
+<h5 id="1从ioreader中读取">1.从io.Reader中读取</h5>
+<blockquote>
+<p>这种形式很灵活，来源可以是文件，也可以是程序中生成的字符串，甚至可以从网络连接中读取的字节流。</p>
+</blockquote>
+<pre><code>package main
+
+import (
+	&quot;bytes&quot;
+	&quot;fmt&quot;
+	&quot;github.com/spf13/viper&quot;
+	&quot;log&quot;
+)
+
+func main()  {
+	viper.SetConfigType(&quot;toml&quot;)
+	tomlConfig := []byte(`
+app_name = &quot;awesome web&quot;
+
+[redis]
+ip = &quot;127.0.0.1&quot;
+port = 7381
+`)
+	err := viper.ReadConfig(bytes.NewBuffer(tomlConfig))
+	if err != nil {
+		log.Fatal(&quot;read config failed:%v&quot;, err)
+	}
+
+	fmt.Println(&quot;redis port&quot;, viper.GetInt(&quot;redis.port&quot;))
+}
+</code></pre>
+<h5 id="2unmarshal-反序列化">2.Unmarshal 反序列化</h5>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/spf13/viper&quot;
+	&quot;log&quot;
+)
+
+type Conf struct {
+	AppName string
+	Redis RedisConf
+}
+
+type RedisConf struct {
+	IP string
+	Port int
+}
+
+func main()  {
+	viper.SetConfigName(&quot;config&quot;)
+	viper.SetConfigType(&quot;yaml&quot;)
+	viper.AddConfigPath(&quot;.&quot;)
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatal(&quot;read config failed:%v&quot;, err)
+	}
+
+	//将配置信息，反序列化到声明的结构体 Conf
+	// Unmarshal：一次性将所有配置属性，发序列化到一个结构体。结构体数量，根据配置文件层级，依次定义
+	// UnmarshalKey：俺需要读取指定配置内容，到某个结构体。更简洁
+	var c Conf
+	viper.Unmarshal(&amp;c)
+	//或
+	viper.UnmarshalKey(&quot;redis&quot;, &amp;c)
+
+	fmt.Println(c.Redis)
+}
+</code></pre>
+<h4 id="6保存配置">6.保存配置</h4>
+<ul>
+<li>WriteConfig:配置写到预定义路径，文件存在，覆盖。不存在，报错</li>
+<li>SafeWriteConfig:配置写到预定义路径，文件存在，不覆盖</li>
+<li>WriteConfigAs:保存配置到指定路径，文件存在，覆盖</li>
+<li>SafeWriteConfigAs:保存配置到指定路径，文件存在，不覆盖</li>
+</ul>
+<pre><code>package main
+
+import (
+	&quot;github.com/spf13/viper&quot;
+	&quot;log&quot;
+)
+
+func main()  {
+	viper.Set(&quot;redis.ip&quot;, &quot;127.0.0.1&quot;)
+	viper.Set(&quot;redis.port&quot;, &quot;6379&quot;)
+
+	viper.SetConfigName(&quot;config&quot;)
+	viper.SetConfigType(&quot;yaml&quot;)
+	viper.AddConfigPath(&quot;.&quot;)
+
+	err := viper.SafeWriteConfig()
+	if err != nil {
+		log.Fatal(&quot;write config failed:&quot;, err)
+	}
+}
+</code></pre>
+<h4 id="7监听文件修改">7.监听文件修改</h4>
+<blockquote>
+<p>可以监听文件修改，热加载配置，不需要重启<br>
+viper.WatchConfig()</p>
+</blockquote>
+<pre><code>package main
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/spf13/viper&quot;
+	&quot;log&quot;
+	&quot;time&quot;
+)
+
+func main() {
+	viper.SetConfigName(&quot;config&quot;)
+	viper.SetConfigType(&quot;yaml&quot;)
+	viper.AddConfigPath(&quot;.&quot;)
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatal(&quot;read config failed:&quot;, err)
+	}
+
+	//监听文件修改，热加载配置
+	viper.WatchConfig()
+	fmt.Println(&quot;redis port before sleep:&quot;, viper.Get(&quot;redis.port&quot;))
+	time.Sleep(time.Second * 10)
+	fmt.Println(&quot;redis port after sleep:&quot;, viper.Get(&quot;redis.port&quot;))
+}
+</code></pre>
+
+          
+          <p class="next-post">下一篇：
+            <a href="https://wo-wo.github.io/post/go-xue-xi-14jie-xi-ming-ling-xing-xuan-xiang-tuo-zhan-go-flags/">
+              <span class="post-title">
+                go学习-14.解析命令行选项-拓展-go-flags&rarr;
+              </span>
+            </a>
+          </p>
+        
+        <div class="comment">
+          
+        </div>
+      </div>
+    </div>
+  </article>
+ <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+            
+              
+              <li class="list-inline-item">
+              <a href="https://wo-wo.github.io/atom.xml" target="_blank">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+              </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy;<span>石强博客</span><br><a href="https://github.com/getgridea/gridea" class="Themeinfo">Powered by Gridea</a></p>
+        </div>
+      </div>
+    </div>
+   </footer>
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/bootstrap.bundle.min.js"></script> -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://cdn.jsdelivr.net/gh/Alanrk/clean-cdn@1.0/scripts/clean-blog.min.js"></script>
+  <!-- <script src="https://wo-wo.github.io/media/scripts/clean-blog.min.js"></script> -->
+  <script src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+  <style type="text/css">a.back_to_top{text-decoration:none;position:fixed;bottom:40px;right:30px;background:#f0f0f0;height:40px;width:40px;border-radius:50%;line-height:36px;font-size:18px;text-align:center;transition-duration:.5s;transition-propety:background-color;display:none}a.back_to_top span{color:#888}a.back_to_top:hover{cursor:pointer;background:#dfdfdf}a.back_to_top:hover span{color:#555}@media print,screen and(max-width:580px){.back_to_top{display:none!important}}</style>
+<a id="back_to_top" href="#" class="back_to_top">
+  <span>▲</span></a>
+<script>$(document).ready((function(_this) {
+    return function() {
+      var bt;
+      bt = $('#back_to_top');
+      if ($(document).width() > 480) {
+        $(window).scroll(function() {
+          var st;
+          st = $(window).scrollTop();
+          if (st > 30) {
+            return bt.css('display', 'block')
+          } else {
+            return bt.css('display', 'none')
+          }
+        });
+        return bt.click(function() {
+          $('body,html').animate({
+            scrollTop: 0
+          },
+          800);
+          return false
+        })
+      }
+    }
+  })(this));</script>
+  </body>
+</html>
+
